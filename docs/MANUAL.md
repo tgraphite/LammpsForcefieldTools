@@ -392,7 +392,7 @@ E = Σ_i K_i [1 + cos(n_i φ − δ_i)]
 - 检查在后台线程执行，单源超时 1.5 秒，不阻塞管线，也不影响退出码。
 - 同时查询 PyPI、`PIP_INDEX_URL`、`LFT_UPDATE_URL` / `LFT_UPDATE_INDEX`，取最高版本。
 - 发现新版本时只在 stderr 打印一行提示，例如：
-  `[lft NOTICE] new version 1.2.0 available (current 1.1.0): pip install -U lammps-forcefield-tools`
+  `[lft NOTICE] new version 1.2.0 available (current 1.1.0); upgrade with: pip install -U lammps-forcefield-tools`
 - 非交互终端、`CI`、`--version` / `--help` 自动跳过。
 - 关闭：`LFT_NO_UPDATE_CHECK=1` 或 `update_check = off`；手动检查：`lft --check-update`；
   单次跳过：`lft --no-update-check -f ...`。
