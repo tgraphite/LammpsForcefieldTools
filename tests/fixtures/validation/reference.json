@@ -1,0 +1,457 @@
+{
+  "schema": "lft.validation.small_molecules.v1",
+  "provenance": {
+    "generator": "scripts/build_validation_suite.py",
+    "oracle": "AmberTools26 atomtype",
+    "oracle_sha256": "dfa9c7d9a838ee9aef05198535af8639e1771be8f1a7c001008bd02ae15a4207",
+    "definition": "/opt/lft/research/ambertools26/ambertools26_src/dat/antechamber/ATOMTYPE_GFF.DEF",
+    "note": "Non-periodic molecules only; every case has a 1:1 GAFF type reference."
+  },
+  "cases": {
+    "water": {
+      "smiles": "O",
+      "net_charge": 0,
+      "mol2": "molecules/water.mol2",
+      "natoms": 3,
+      "mol2_sha256": "9e54d3ecf300915cc6d7a6722df1029a7daa86474a59f7159d59b99b2a4f0e77",
+      "gaff_types": {
+        "1": "oh",
+        "2": "ho",
+        "3": "ho"
+      }
+    },
+    "methane": {
+      "smiles": "C",
+      "net_charge": 0,
+      "mol2": "molecules/methane.mol2",
+      "natoms": 5,
+      "mol2_sha256": "d0fb0f6e1b6580364ded6790c20e62bddae6df629ef1a0fa5277d14a6548ba99",
+      "gaff_types": {
+        "1": "c3",
+        "2": "hc",
+        "3": "hc",
+        "4": "hc",
+        "5": "hc"
+      }
+    },
+    "ethanol": {
+      "smiles": "CCO",
+      "net_charge": 0,
+      "mol2": "molecules/ethanol.mol2",
+      "natoms": 9,
+      "mol2_sha256": "862de227d67e1ff59ee240ddce26561f6e0ec260a560b63a8f664c2a04693622",
+      "gaff_types": {
+        "1": "c3",
+        "2": "c3",
+        "3": "oh",
+        "4": "hc",
+        "5": "hc",
+        "6": "hc",
+        "7": "h1",
+        "8": "h1",
+        "9": "ho"
+      }
+    },
+    "acetone": {
+      "smiles": "CC(=O)C",
+      "net_charge": 0,
+      "mol2": "molecules/acetone.mol2",
+      "natoms": 10,
+      "mol2_sha256": "99e6e6aecde71be0315e618e2c0e7b48f0a61b8623cc2f3ed0acaef4855f7e7a",
+      "gaff_types": {
+        "1": "c3",
+        "2": "c",
+        "3": "o",
+        "4": "c3",
+        "5": "hc",
+        "6": "hc",
+        "7": "hc",
+        "8": "hc",
+        "9": "hc",
+        "10": "hc"
+      }
+    },
+    "benzene": {
+      "smiles": "c1ccccc1",
+      "net_charge": 0,
+      "mol2": "molecules/benzene.mol2",
+      "natoms": 12,
+      "mol2_sha256": "330a5c116d6f7854d92fef4b6ce2cd4e3d70f01d522753ac39dba9912b2a7104",
+      "gaff_types": {
+        "1": "ca",
+        "2": "ca",
+        "3": "ca",
+        "4": "ca",
+        "5": "ca",
+        "6": "ca",
+        "7": "ha",
+        "8": "ha",
+        "9": "ha",
+        "10": "ha",
+        "11": "ha",
+        "12": "ha"
+      }
+    },
+    "pyridine": {
+      "smiles": "c1ccncc1",
+      "net_charge": 0,
+      "mol2": "molecules/pyridine.mol2",
+      "natoms": 11,
+      "mol2_sha256": "1533e2d3c9d300b13c721a5a961550f3bb1ca485e85398c0352026b54584286b",
+      "gaff_types": {
+        "1": "ca",
+        "2": "ca",
+        "3": "ca",
+        "4": "nb",
+        "5": "ca",
+        "6": "ca",
+        "7": "ha",
+        "8": "ha",
+        "9": "h4",
+        "10": "h4",
+        "11": "ha"
+      }
+    },
+    "acetamide": {
+      "smiles": "CC(N)=O",
+      "net_charge": 0,
+      "mol2": "molecules/acetamide.mol2",
+      "natoms": 9,
+      "mol2_sha256": "8681c048d87a9999377120cefab84399ee822cd62088871525e754fb14d47430",
+      "gaff_types": {
+        "1": "c3",
+        "2": "c",
+        "3": "n",
+        "4": "o",
+        "5": "hc",
+        "6": "hc",
+        "7": "hc",
+        "8": "hn",
+        "9": "hn"
+      }
+    },
+    "acetate": {
+      "smiles": "CC(=O)[O-]",
+      "net_charge": -1,
+      "mol2": "molecules/acetate.mol2",
+      "natoms": 7,
+      "mol2_sha256": "010cfabcc56120e73bdf2f7553217378200da2eced2d69d62306f54756843efe",
+      "gaff_types": {
+        "1": "c3",
+        "2": "c2",
+        "3": "o",
+        "4": "o",
+        "5": "hc",
+        "6": "hc",
+        "7": "hc"
+      }
+    },
+    "methylammonium": {
+      "smiles": "C[NH3+]",
+      "net_charge": 1,
+      "mol2": "molecules/methylammonium.mol2",
+      "natoms": 8,
+      "mol2_sha256": "6c77bec4d4b786eaeaaffabdfefb376eadce3c4842a55b39917e1a3de155dae5",
+      "gaff_types": {
+        "1": "c3",
+        "2": "n4",
+        "3": "hx",
+        "4": "hx",
+        "5": "hx",
+        "6": "hn",
+        "7": "hn",
+        "8": "hn"
+      }
+    },
+    "phenol": {
+      "smiles": "c1ccc(O)cc1",
+      "net_charge": 0,
+      "mol2": "molecules/phenol.mol2",
+      "natoms": 13,
+      "mol2_sha256": "4bd94a37c75215e07d242d2ac62f983d412a706d2fdb48bf6a16f69e5a576516",
+      "gaff_types": {
+        "1": "ca",
+        "2": "ca",
+        "3": "ca",
+        "4": "ca",
+        "5": "oh",
+        "6": "ca",
+        "7": "ca",
+        "8": "ha",
+        "9": "ha",
+        "10": "ha",
+        "11": "ho",
+        "12": "ha",
+        "13": "ha"
+      }
+    },
+    "imidazole": {
+      "smiles": "c1cnc[nH]1",
+      "net_charge": 0,
+      "mol2": "molecules/imidazole.mol2",
+      "natoms": 9,
+      "mol2_sha256": "1786716a9aeb8e8469d718d847524501faa8e6a3915c006e9a7f4baf4561c987",
+      "gaff_types": {
+        "1": "c2",
+        "2": "c2",
+        "3": "n2",
+        "4": "c2",
+        "5": "na",
+        "6": "h4",
+        "7": "h4",
+        "8": "h5",
+        "9": "hn"
+      }
+    },
+    "naphthalene": {
+      "smiles": "c1ccc2ccccc2c1",
+      "net_charge": 0,
+      "mol2": "molecules/naphthalene.mol2",
+      "natoms": 18,
+      "mol2_sha256": "c9a1c01038d5b0c97f2d32155d965355fa01abbc08ccfac0f0ad95b94e08fecf",
+      "gaff_types": {
+        "1": "ca",
+        "2": "ca",
+        "3": "ca",
+        "4": "ca",
+        "5": "ca",
+        "6": "ca",
+        "7": "ca",
+        "8": "ca",
+        "9": "ca",
+        "10": "ca",
+        "11": "ha",
+        "12": "ha",
+        "13": "ha",
+        "14": "ha",
+        "15": "ha",
+        "16": "ha",
+        "17": "ha",
+        "18": "ha"
+      }
+    },
+    "caffeine": {
+      "smiles": "Cn1cnc2c1c(=O)n(C)c(=O)n2C",
+      "net_charge": 0,
+      "mol2": "molecules/caffeine.mol2",
+      "natoms": 24,
+      "mol2_sha256": "ab82edcba90f58a5572a97b5d25e6ee747dd00b7f31a7619891120c8a5241f78",
+      "gaff_types": {
+        "1": "c3",
+        "2": "na",
+        "3": "c2",
+        "4": "n2",
+        "5": "c2",
+        "6": "c2",
+        "7": "c",
+        "8": "o",
+        "9": "n",
+        "10": "c3",
+        "11": "c",
+        "12": "o",
+        "13": "n",
+        "14": "c3",
+        "15": "h1",
+        "16": "h1",
+        "17": "h1",
+        "18": "h5",
+        "19": "h1",
+        "20": "h1",
+        "21": "h1",
+        "22": "h1",
+        "23": "h1",
+        "24": "h1"
+      }
+    },
+    "glucose": {
+      "smiles": "OC[C@H]1OC(O)[C@H](O)[C@@H](O)[C@@H]1O",
+      "net_charge": 0,
+      "mol2": "molecules/glucose.mol2",
+      "natoms": 24,
+      "mol2_sha256": "b1f7853fa4ec426a82a84d9c7853b71ea420fcddf3359f1246d501caf93f0549",
+      "gaff_types": {
+        "1": "oh",
+        "2": "c3",
+        "3": "c3",
+        "4": "os",
+        "5": "c3",
+        "6": "oh",
+        "7": "c3",
+        "8": "oh",
+        "9": "c3",
+        "10": "oh",
+        "11": "c3",
+        "12": "oh",
+        "13": "ho",
+        "14": "h1",
+        "15": "h1",
+        "16": "h1",
+        "17": "h2",
+        "18": "ho",
+        "19": "h1",
+        "20": "ho",
+        "21": "h1",
+        "22": "ho",
+        "23": "h1",
+        "24": "ho"
+      }
+    },
+    "cyclohexane": {
+      "smiles": "C1CCCCC1",
+      "net_charge": 0,
+      "mol2": "molecules/cyclohexane.mol2",
+      "natoms": 18,
+      "mol2_sha256": "23ee970ec47b5ab9d59f35a2c1c67c2281b87fcbba53daff5a6791cff575eaed",
+      "gaff_types": {
+        "1": "c3",
+        "2": "c3",
+        "3": "c3",
+        "4": "c3",
+        "5": "c3",
+        "6": "c3",
+        "7": "hc",
+        "8": "hc",
+        "9": "hc",
+        "10": "hc",
+        "11": "hc",
+        "12": "hc",
+        "13": "hc",
+        "14": "hc",
+        "15": "hc",
+        "16": "hc",
+        "17": "hc",
+        "18": "hc"
+      }
+    },
+    "dmso": {
+      "smiles": "CS(C)=O",
+      "net_charge": 0,
+      "mol2": "molecules/dmso.mol2",
+      "natoms": 10,
+      "mol2_sha256": "e9c12077d72234d8c42ffb08c66a3c58a63fd99ccdcf1ebddec29fd0ff0d5887",
+      "gaff_types": {
+        "1": "c3",
+        "2": "s4",
+        "3": "c3",
+        "4": "o",
+        "5": "h1",
+        "6": "h1",
+        "7": "h1",
+        "8": "h1",
+        "9": "h1",
+        "10": "h1"
+      }
+    },
+    "trifluoroethanol": {
+      "smiles": "FC(F)(F)CO",
+      "net_charge": 0,
+      "mol2": "molecules/trifluoroethanol.mol2",
+      "natoms": 9,
+      "mol2_sha256": "48e17d5e39aadb56e957e22023888c3acd82d35d42253bec27cc009cc5550a60",
+      "gaff_types": {
+        "1": "f",
+        "2": "c3",
+        "3": "f",
+        "4": "f",
+        "5": "c3",
+        "6": "oh",
+        "7": "h1",
+        "8": "h1",
+        "9": "ho"
+      }
+    },
+    "diethyl_ether": {
+      "smiles": "CCOCC",
+      "net_charge": 0,
+      "mol2": "molecules/diethyl_ether.mol2",
+      "natoms": 15,
+      "mol2_sha256": "518599b89d7b9c76ff56791c7e9ffb49fef56426690ac807a5f829451166cde1",
+      "gaff_types": {
+        "1": "c3",
+        "2": "c3",
+        "3": "os",
+        "4": "c3",
+        "5": "c3",
+        "6": "hc",
+        "7": "hc",
+        "8": "hc",
+        "9": "h1",
+        "10": "h1",
+        "11": "h1",
+        "12": "h1",
+        "13": "hc",
+        "14": "hc",
+        "15": "hc"
+      }
+    },
+    "aniline": {
+      "smiles": "Nc1ccccc1",
+      "net_charge": 0,
+      "mol2": "molecules/aniline.mol2",
+      "natoms": 14,
+      "mol2_sha256": "b6548ec94cabec2cc3ef2457dd1835e5b68801f69619d725a1add17e0d7cb1fe",
+      "gaff_types": {
+        "1": "nh",
+        "2": "ca",
+        "3": "ca",
+        "4": "ca",
+        "5": "ca",
+        "6": "ca",
+        "7": "ca",
+        "8": "hn",
+        "9": "hn",
+        "10": "ha",
+        "11": "ha",
+        "12": "ha",
+        "13": "ha",
+        "14": "ha"
+      }
+    },
+    "thiophene": {
+      "smiles": "c1ccsc1",
+      "net_charge": 0,
+      "mol2": "molecules/thiophene.mol2",
+      "natoms": 9,
+      "mol2_sha256": "a1aeebea5cba508d3d2d09b8ae422bf61cee03d83993be813680d9f671859c37",
+      "gaff_types": {
+        "1": "c2",
+        "2": "c2",
+        "3": "c2",
+        "4": "ss",
+        "5": "c2",
+        "6": "ha",
+        "7": "ha",
+        "8": "h4",
+        "9": "h4"
+      }
+    },
+    "acetonitrile": {
+      "smiles": "CC#N",
+      "net_charge": 0,
+      "mol2": "molecules/acetonitrile.mol2",
+      "natoms": 6,
+      "mol2_sha256": "f86c158d27a040a734a48e073f2fa04c5ddaa3667fc074858c6f3f1fc4ec1a08",
+      "gaff_types": {
+        "1": "c3",
+        "2": "c1",
+        "3": "n1",
+        "4": "hc",
+        "5": "hc",
+        "6": "hc"
+      }
+    },
+    "formaldehyde": {
+      "smiles": "C=O",
+      "net_charge": 0,
+      "mol2": "molecules/formaldehyde.mol2",
+      "natoms": 4,
+      "mol2_sha256": "ce7b963e83445a881e7e3cdc5aaff21c03b0ad43f0bd90e1ae9410f85ed8d014",
+      "gaff_types": {
+        "1": "c",
+        "2": "o",
+        "3": "h4",
+        "4": "h4"
+      }
+    }
+  }
+}

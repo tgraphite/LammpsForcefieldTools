@@ -1,0 +1,21 @@
+GAFF parameter table (gaff_bonded.json)
+
+Source
+------
+Derived from the AmberTools gaff.dat parameter file (GAFF 1.81) through the
+Sobtop reference files (bonded_param.dat, LJ_param.dat).
+
+Generation
+----------
+scripts/build_parameter_table.py rebuilds this file from
+references/sobtop/*.dat.  The JSON provenance block records the source
+SHA-256 hashes and the GAFF version.
+
+License
+-------
+AmberTools is distributed under the AmberTools license.  This table is a
+derived data file, not AmberTools source code.  Redistribution must comply
+with that license; the release owner confirms they hold the required
+AmberTools license.  If you do not, regenerate the table from your own
+licensed AmberTools installation or point LFT_PARAM_DIR at your own
+Sobtop/GAFF directory.

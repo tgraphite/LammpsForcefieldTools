@@ -58,6 +58,15 @@ class DihedralParameter:
     function: str = "fourier"
     source: str = "classic_guess"
     multiplicity_divisor: float = 1.0
+    #: Full multi-term Fourier expansion (k, periodicity, phase).  GAFF
+    #: dihedral types routinely need 2-4 terms; the scalar fields above mirror
+    #: the first term for backwards compatibility.
+    terms: tuple[tuple[float, int, float], ...] = ()
+
+    def fourier_terms(self) -> tuple[tuple[float, int, float], ...]:
+        if self.terms:
+            return self.terms
+        return ((self.k, self.periodicity, self.phase),)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -67,6 +76,10 @@ class DihedralParameter:
             "function": self.function,
             "source": self.source,
             "multiplicity_divisor": self.multiplicity_divisor,
+            "terms": [
+                {"k_kcal_mol": k, "periodicity": n, "phase_degree": phase}
+                for k, n, phase in self.fourier_terms()
+            ],
         }
 
 

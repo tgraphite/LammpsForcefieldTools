@@ -2,7 +2,7 @@
 
 **项目**：LammpsForcefieldTools  
 **发行包**：`lammps-forcefield-tools`  
-**版本**：`0.1.0`  
+**版本**：`1.1.0`  
 **状态日期**：2026-11-15  
 **命令行入口**：`lft`
 
@@ -17,14 +17,16 @@
 | 结构读入 | 稳定 | MOL2/PDB/PQR/GRO/XYZ/CIF/mmCIF/结构 JSON |
 | 连接性与拓扑 | 稳定 | 显式键归一化、距离建键、角/二面角/improper/1-4 pair、镜像提升 |
 | GAFF 原子类型 | 稳定 | 纯 Python 移植 `atomtype.c`，无外部二进制 |
-| 电荷 | 稳定 | 输入、MMFF94、AM1-BCC、RESP/RESP2、MK、CM5/raw-CM5、ADCH |
-| 量化后端 | 稳定 | 纯 pySCF；单点、PCM、Hessian、ESP |
-| 键合参数 | 部分 | 参考库覆盖不完整；未命中项使用确定性通用值并告警 |
-| 非键参数 | 部分 | GAFF/UFF 元素级 LJ 表；离子与特殊类型覆盖有限 |
-| LAMMPS 输出 | 稳定 | `real` 单位、`.data` + `.in`，可选 `.lt` |
+| 电荷 | 稳定 | 输入、MMFF94、AM1-BCC、RESP/RESP2、MK、CM5/raw-CM5、ADCH；`dft-*` 先 DFT 优化几何 |
+| 量化后端 | 稳定 | 纯 pySCF；单点、PCM、Hessian、ESP；geometric 几何优化 |
+| 几何预优化 | 稳定 | UFF（默认）、MMFF94、DFT；短程 SD + CG |
+| 键合参数 | 稳定 | 内置 GAFF 1.81 库（键/角/多项二面角/improper/LJ）；缺参策略显式 |
+| 非键参数 | 稳定 | GAFF/UFF LJ 表 + 离子参数；UFF 键合仍为规则占位 |
+| LAMMPS 输出 | 稳定 | 默认 moltemplate `.lt`/`system.lt`；`--lammpsdata` 写 `.data` + `.in`（周期 PPPM） |
 | GROMACS 输出 | 稳定 | `.itp/.top/.gro/.mdp` |
 | 周期体系 | 稳定（有限制） | 镜像感知 IR、winding 披露；必须显式电荷 |
 | 审计与诊断 | 稳定 | 内存审计 + 按需 `<name>.lft/` 纯文本披露 |
+| 更新检查 | 稳定 | 缓存 + 后台线程 + 多源；只提示，不自动安装 |
 
 ---
 
@@ -47,8 +49,10 @@
 | `src/lft/config.py` | `PipelineConfig` 校验与默认值 | 稳定 |
 | `src/lft/pipeline.py` | 端到端任务图、产物与披露写出 | 稳定 |
 | `src/lft/audit.py` | run id、哈希、产物清单、警告 | 稳定 |
+| `src/lft/optimize.py` | UFF/MMFF94/DFT 几何预优化 | 稳定 |
 | `src/lft/report.py` | 人类可读运行摘要 | 稳定 |
 | `src/lft/settings.py` | `lft.config` 读取与环境变量提升 | 稳定 |
+| `src/lft/update.py` | 版本缓存、多源检查与更新提示 | 稳定 |
 | `src/lft/errors.py` | 结构化错误类型 | 稳定 |
 | `src/lft/bonds.py` | 连接性/键合项兼容导入 | 兼容层 |
 | `src/lft/hessian.py` | Hessian 加载/投影兼容导入 | 兼容层 |
@@ -91,7 +95,8 @@
 | `src/lft/forcefields/matching.py` | GAFF/UFF/manual 分派与非键参数 | 稳定 |
 | `src/lft/forcefields/manual.py` | 手动参数文件解析 | 稳定 |
 | `src/lft/forcefields/tables.py` | 元素、质量、LJ 表 | 部分 |
-| `src/lft/forcefields/reference.py` | 参考键合参数读取 | 部分 |
+| `src/lft/forcefields/library.py` | 内置 GAFF 参数库（索引匹配、多项二面角） | 稳定 |
+| `src/lft/forcefields/reference.py` | 参数库兼容层 | 兼容层 |
 | `src/lft/forcefields/atomtype.py` | 外部 `atomtype` 适配 | 适配/对照 |
 | `src/lft/forcefields/gaff.py` | GAFF typing 兼容导入 | 兼容层 |
 | `src/lft/forcefields/uff.py` | UFF typing 兼容导入 | 兼容层 |
@@ -169,7 +174,7 @@
 | 电荷 | `input`、`mmff94`、`am1-bcc`、`cm5`、`raw_cm5`、`adch`、`mk`、`resp`、`resp2` | 原子电荷 + 守恒校验 |
 | 量化 | `--qc method/basis`、`--qc-backend pyscf` | 单点、PCM、Hessian、ESP |
 | 参数模式 | `classic`、`hessian` | 参考/几何/投影参数，带来源标记 |
-| LAMMPS | `--output lammps` | `.data`、`.in`，可选 `.lt`/`system.lt` |
+| LAMMPS | `--output lammps` | 默认 `.lt`/`system.lt`；`--lammpsdata` 写 `.data`、`.in`；周期 PPPM |
 | GROMACS | `--output gromacs` | `.itp`、`.top`、`.gro`、`.mdp` |
 | 周期 | 晶体 CIF/PDB/MOL2 | 镜像提升、winding 披露、显式电荷强制 |
 | 诊断 | `--debug` | `debug.txt`、`normalized_ir.json` |
@@ -180,13 +185,14 @@
 
 ## 4. 验证矩阵
 
-以下为 0.1.0 发布前的实测结果。测试环境：Python 3.11、Linux x86_64、pySCF 2.14、NumPy 1.26。
+以下为 1.1.0 发布前的实测结果。测试环境：Python 3.11、Linux x86_64、pySCF 2.14、NumPy 1.26。
 
 | 检查 | 命令 | 最近结果（2026-11-15） |
 |---|---|---|
-| 单元/回归测试 | `python -m pytest -q` | **360 passed**，42.55 s |
-| 文档/CLI 一致性 | `pytest -q tests/test_docs_consistency.py` | **9 passed** |
-| 命令行帮助 | `lft --help` / `lft -V` | `lft 0.1.0`，帮助正常渲染 |
+| 单元/回归测试 | `python -m pytest -q` | **501 passed** |
+| 1:1 小分子验证 | `pytest -q tests/test_validation_suite.py` | **124 passed**（22 分子，类型/参数/writer 对照） |
+| 文档/CLI 一致性 | `pytest -q tests/test_docs_consistency.py` | 通过 |
+| 命令行帮助 | `lft --help` / `lft -V` | `lft 1.1.0`，帮助正常渲染 |
 | 包元数据 | `twine check dist/*` | wheel 与 sdist 均 **PASSED** |
 | Wheel 安装 | 独立 venv 安装 `*.whl` | 安装成功，`pip check` 无冲突，入口 `lft` 可用 |
 | Sdist 安装 | 独立 venv 从 `*.tar.gz` 构建安装 | 构建安装成功，`lft --version` 正常 |
@@ -205,12 +211,12 @@
 
 ## 5. 已知边界
 
-1. **经典键合参数**：GAFF 原子类型完整，但键/角/二面角参考库覆盖有限。未命中项使用确定性默认值（`classic:geometry_guess`、`classic:generic_periodic`）并写 `PARAMETER_GENERIC_GUESS` 警告。
-2. **UFF/共轭二面角**：使用 k=0.50、phase=0、n=2 的占位周期项；函数形式与单位正确，数值不是完整 UFF 扭转库。
-3. **AM1-BCC**：默认不做几何优化，电荷依赖输入构象；与 AmberTools `sqm` 为化学级一致（~1e-2 e），非逐位一致。
+1. **键合参数**：内置 GAFF 1.81 库覆盖键/角/二面角；极少数角（如 `h4-c-h4`）仍用几何通用值并写 `PARAMETER_GENERIC_GUESS`。多项二面角完整保留。
+2. **UFF**：键合项仍是规则占位值，只作为 GAFF 不支持元素的后备；缺参二面角按 UFF 策略省略并告警。
+3. **AM1-BCC**：默认先做 UFF 预优化（`--preopt`），再做 AM1 单点；与 AmberTools `sqm` 为化学级一致（~1e-2 e）。
 4. **RESP**：与 Multiwfn 参考逐原子一致到 ~2e-5–4e-5 e；MK 为单阶段无约束拟合。
 5. **周期电荷**：只接受显式电荷，不做气相 ESP 拟合；winding 图必须读取 `image_map.json`。
-6. **LAMMPS 输出**：固定 `real` 单位、`lj/cut/coul/cut 10.0`、`special_bonds lj 0 0 0.5 / coul 0 0 0.8333333333`；未实现 PPPM。
+6. **LAMMPS 输出**：固定 `real` 单位、`special_bonds lj 0 0 0.5 / coul 0 0 0.8333333333`；周期体系用 `lj/cut/coul/long 10.0` + `kspace_style pppm 1.0e-4`（在 `read_data` 之后），非周期用 10 Å 直接截断。
 7. **GROMACS 输出**：非周期输入补兼容盒；部分 PBC 掩码写成全周期盒并披露。
 8. **外部引擎**：`--engine-smoke`、moltemplate、Packmol 需要用户环境提供可执行文件；缺失时报结构化错误。
 9. **参考数据**：`references/`、`thirdparty/`、`research/`、`_scratch/`、`_archive/` 仅保留在开发工作区，不进入 GitHub 主树或发行包。
@@ -239,8 +245,8 @@
 
 | 优先级 | 事项 |
 |---|---|
-| 高 | 补齐 GAFF/UFF 键合参数库，消除 generic 占位 |
-| 高 | 扩大周期与晶体回归覆盖，逐项比对 LJ/Coulomb |
+| 高 | 补齐 UFF 键合规则，减少 UFF 占位 |
+| 高 | 为周期/晶体体系建立 1:1 数值参考后再纳入测试 |
 | 中 | 固定 lint/类型检查版本与规则集 |
 | 中 | 增加非周期大分子与金属配合物样例 |
 | 低 | 发布流程自动化（GitHub Actions → PyPI trusted publishing） |

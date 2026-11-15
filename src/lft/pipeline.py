@@ -1,10 +1,12 @@
 """End-to-end lft task graph.
 
-By default the pipeline writes only runnable artifacts into the output
-directory.  A hidden ``<name>.lft/`` disclosure directory is created on demand
-for information that a reader genuinely needs (periodic image lifts, warnings,
-or the ``--debug`` diagnostic bundle).  Audit data is still collected in
-memory so the CLI can report warnings.
+The pipeline is deliberately linear: load -> connectivity -> optional geometry
+pre-optimisation -> typing -> charges -> parameters -> backend files.  The
+pre-optimisation stage runs before term enumeration so that bond/angle
+equilibrium values and charge models see the same geometry.
+
+Only runnable artifacts are written by default (moltemplate .lt files).  The
+hidden <name>.lft/ directory holds disclosures that a reader genuinely needs.
 """
 
 from __future__ import annotations
@@ -16,14 +18,22 @@ from typing import Any
 
 from .audit import Audit, sha256_file
 from .backends import write_gromacs, write_lammps
-from .charges import CHARGE_METHODS, assign_charges
-from .config import AUTO_AM1BCC_ATOM_THRESHOLD, PipelineConfig
+from .charges import CHARGE_METHODS, assign_charges, charge_base
+from .config import (
+    AUTO_AM1BCC_ATOM_THRESHOLD,
+    AUTO_MMFF94_ATOM_THRESHOLD,
+    MAX_AM1BCC_ATOMS,
+    MAX_DFT_CHARGE_ATOMS,
+    MAX_DFT_GEOMETRY_ATOMS,
+    PipelineConfig,
+)
 from .domain.parameters import ParameterSet
 from .domain.structure import Structure
 from .errors import ChargeError, InputError, ParameterError
 from .forcefields.matching import assign_force_field
 from .io.loaders import load_structure
 from .io.serializers import dump_json
+from .optimize import optimize_structure
 from .parameterize import parameterize
 from .qc import load_hessian, run_qc
 from .runners.gmx import grompp
@@ -44,6 +54,18 @@ class RunResult:
     artifacts: dict[str, Path]
 
 
+@dataclass(slots=True)
+class _ChargeSpec:
+    method: str
+    file: Path | None = None
+    dft_geometry: bool = False
+    requested: str | None = None
+
+    def __iter__(self):
+        yield self.method
+        yield self.file
+
+
 def run_pipeline(config: PipelineConfig) -> RunResult:
     config.validate()
     output_dir = _output_dir(config)
@@ -58,12 +80,48 @@ def run_pipeline(config: PipelineConfig) -> RunResult:
     structure = load_structure(config.structure)
     structure.declared_net_charge = float(config.net_charge)
     structure.multiplicity = config.multiplicity
-    if not structure.bonds:
-        infer_bonds(structure)
-        audit.task("infer_bonds", count=len(structure.bonds), source="distance_radii_valence")
-    else:
-        infer_bonds(structure)
-        audit.task("normalize_bonds", count=len(structure.bonds), source="explicit")
+    infer_bonds(structure)
+    audit.task("infer_bonds", count=len(structure.bonds), source="explicit" if structure.explicit_bonds else "distance_radii_valence")
+
+    charge_spec = _resolve_charge(config, structure)
+    if charge_spec.requested is not None and charge_spec.requested != charge_spec.method:
+        audit.task("charge_selection", requested=config.charge, method=charge_spec.method, file=str(charge_spec.file) if charge_spec.file else None, dft_geometry=charge_spec.dft_geometry)
+
+    preopt_method = _preopt_method(config, charge_spec)
+    if charge_spec.method == "input" and preopt_method != "none":
+        structure.add_warning(
+            "PREOPT_INPUT_CHARGES",
+            "input charges were computed for the original geometry; the pre-optimised geometry may not match them",
+            preopt=preopt_method,
+        )
+    if preopt_method != "none":
+        if structure.cell is not None:
+            structure.add_warning(
+                "PREOPT_SKIPPED_PERIODIC",
+                "geometry pre-optimisation is skipped for periodic cells",
+                requested=preopt_method,
+            )
+            audit.task("preopt", method=preopt_method, skipped=True, reason="periodic")
+        else:
+            limit = config.dft_opt_max_atoms if preopt_method == "dft" else config.preopt_max_atoms
+            steps = config.dft_opt_max_steps if preopt_method == "dft" else 500
+            result = optimize_structure(structure, preopt_method, qc=config.qc, max_steps=steps, max_atoms=limit)
+            if result.metadata.get("skipped"):
+                structure.add_warning(
+                    "PREOPT_SKIPPED_SIZE",
+                    f"geometry pre-optimisation skipped: {structure.natoms} atoms exceed the {limit}-atom limit",
+                    requested=preopt_method,
+                    atom_count=structure.natoms,
+                    limit=limit,
+                )
+            elif not result.converged:
+                structure.add_warning(
+                    "PREOPT_NOT_CONVERGED",
+                    f"{result.method} pre-optimisation did not converge within the step limit",
+                    engine=result.method,
+                )
+            audit.task("preopt", method=result.method, converged=result.converged, metadata=result.metadata)
+
     validate_image_shifts(structure)
     enumerate_terms(structure)
     audit.task("enumerate_terms", angles=len(structure.angles), dihedrals=len(structure.dihedrals), impropers=len(structure.impropers), pairs=len(structure.pairs))
@@ -88,17 +146,13 @@ def run_pipeline(config: PipelineConfig) -> RunResult:
             if isinstance(value, str) and Path(value).is_file():
                 audit.add_artifact(f"atomtype_{name}", Path(value), kind="atomtype")
 
-    charge_method, charge_file = _resolve_charge(config, structure)
-    if charge_method != config.charge:
-        audit.task("charge_selection", requested=config.charge, method=charge_method, file=str(charge_file) if charge_file else None)
-
     qc_result = None
-    needs_qc = charge_method in _QC_METHODS and charge_file is None
+    needs_qc = charge_spec.method in _QC_METHODS and charge_spec.file is None
     if config.parameter_mode == "hessian" and config.hessian_file is None:
         needs_qc = True
     if needs_qc:
         if config.no_qc:
-            raise ParameterError(f"{charge_method} or hessian mode requires QC; --no-qc is incompatible without an artifact")
+            raise ParameterError(f"{charge_spec.method} or hessian mode requires QC; --no-qc is incompatible without an artifact")
         workdir.mkdir(parents=True, exist_ok=True)
         qc_result = run_qc(structure, qc=config.qc, backend=config.qc_backend, need_hessian=config.parameter_mode == "hessian", workdir=str(workdir))
         audit.task("qc", backend=qc_result.backend, method=qc_result.method, basis=qc_result.basis, energy_hartree=qc_result.energy_hartree, metadata=qc_result.metadata)
@@ -106,11 +160,12 @@ def run_pipeline(config: PipelineConfig) -> RunResult:
             value = qc_result.metadata.get(label)
             if isinstance(value, str) and Path(value).is_file():
                 audit.add_artifact(f"qc_{label}", Path(value), kind="qc")
-        if charge_method == "resp2" and charge_file is None:
+        if charge_spec.method == "resp2" and charge_spec.file is None:
             aqueous_qc = run_qc(structure, qc=config.qc, backend=config.qc_backend, need_hessian=False, aqueous=True, workdir=str(workdir))
             qc_result.aqueous_population_charges = aqueous_qc.population_charges
             qc_result.aqueous_wavefunction = aqueous_qc.wavefunction
             audit.task("qc_aqueous", backend=aqueous_qc.backend, method=aqueous_qc.method, basis=aqueous_qc.basis, energy_hartree=aqueous_qc.energy_hartree, metadata=aqueous_qc.metadata)
+
     hessian = None
     hessian_metadata: dict[str, Any] | None = None
     if config.hessian_file is not None:
@@ -119,25 +174,41 @@ def run_pipeline(config: PipelineConfig) -> RunResult:
     elif qc_result is not None and qc_result.hessian is not None:
         hessian = qc_result.hessian
         hessian_metadata = {"source": "qc", "shape": list(hessian.shape), "units": "hartree/bohr^2"}
+
     charge_metadata = assign_charges(
         structure,
-        charge_method,
+        charge_spec.method,
         net_charge=config.net_charge,
-        charge_file=charge_file,
+        charge_file=charge_spec.file,
         resp2_delta=config.resp2_delta,
         workdir=workdir,
         qc_result=qc_result,
     )
+    charge_metadata["dft_geometry"] = bool(charge_spec.dft_geometry)
     audit.task("charges", **charge_metadata)
     params.metadata["charge"] = charge_metadata
     for label in ("input", "output"):
         value = charge_metadata.get(label)
         if isinstance(value, str) and Path(value).is_file():
             audit.add_artifact(f"charges_{label}", Path(value), kind="charges")
-    for warning in structure.warnings + params.warnings:
-        audit.add_warning(warning)
-    params = parameterize(structure, params, mode=config.parameter_mode, hessian=hessian, hessian_method=config.hessian_method)
-    audit.task("parameterize", mode=config.parameter_mode, method=config.hessian_method, parameter_counts=params.metadata.get("parameter_counts", {}), hessian=hessian_metadata)
+
+    params = parameterize(
+        structure,
+        params,
+        mode=config.parameter_mode,
+        hessian=hessian,
+        hessian_method=config.hessian_method,
+        current_geometry=config.current_geometry,
+        missing_torsion=config.missing_torsion,
+        missing_improper=config.missing_improper,
+    )
+    audit.task("parameterize", mode=config.parameter_mode, method=config.hessian_method, parameter_counts=params.metadata.get("parameter_counts", {}), audit=params.metadata.get("parameter_audit", {}), hessian=hessian_metadata)
+    if config.current_geometry:
+        structure.add_warning(
+            "INFO_CURRENT_GEOMETRY",
+            "equilibrium bond lengths and angles are pinned to the input geometry; this is a conformer-specific topology, not a thermodynamic force field",
+            atom_count=structure.natoms,
+        )
     structure.validate()
     if config.output == "gromacs" and structure.cell is None:
         structure.add_warning("GROMACS_COMPATIBILITY_BOX", "non-periodic source received a finite compatibility box because modern GROMACS requires Verlet with a box")
@@ -156,41 +227,67 @@ def run_pipeline(config: PipelineConfig) -> RunResult:
     if config.output == "gromacs":
         artifacts = write_gromacs(structure, params, output_dir, disclose_dir=image_dir, emit_image_map=emit_image_map)
     else:
-        artifacts = write_lammps(structure, params, output_dir, emit_lt=config.emit_lt, disclose_dir=image_dir, emit_image_map=emit_image_map)
+        artifacts = write_lammps(
+            structure,
+            params,
+            output_dir,
+            emit_lt=config.emit_lt,
+            emit_data=config.lammps_data,
+            disclose_dir=image_dir,
+            emit_image_map=emit_image_map,
+        )
     audit.task("write_backend", backend=config.output, artifacts=sorted(artifacts))
     for name, path in artifacts.items():
         audit.add_artifact(name, path, kind=f"{config.output}:{name}")
     if config.engine_smoke:
-        smoke = _run_engine_smoke(config, artifacts, output_dir, audit)
+        smoke = _run_engine_smoke(config, structure, params, artifacts, output_dir, audit)
         artifacts.update(smoke)
+
+    # Writers can add warnings (for example a charged periodic system falling
+    # back to a cutoff); collect them before the disclosure file is written.
+    for warning in structure.warnings + params.warnings:
+        audit.add_warning(warning)
 
     artifacts.update(_write_disclosure(structure, params, audit, output_dir, disclose_dir, config))
     return RunResult(audit.run_id, output_dir, structure, params, audit, artifacts)
 
 
-def _resolve_charge(config: PipelineConfig, structure: Structure) -> tuple[str, Path | None]:
+def _resolve_charge(config: PipelineConfig, structure: Structure) -> _ChargeSpec:
     """Decide the charge model from the CLI spec, structure charges, and size."""
 
     spec = config.charge
+    requested = spec
+    dft_geometry = False
     if spec is not None and spec.lower() in CHARGE_METHODS:
         spec = spec.lower()
+        if spec.startswith("dft-"):
+            dft_geometry = True
+            spec = charge_base(spec)
     if spec is not None and spec not in CHARGE_METHODS:
         path = Path(spec).expanduser()
         if path.is_file():
-            return "input", path
+            return _ChargeSpec("input", path, False, requested)
         raise InputError(
             f"--charge value {spec!r} is neither a known method nor an existing charge file",
-            hint="pass a method such as resp, am1-bcc, or input, or a path to a text file with one charge per atom",
+            hint="pass a method such as resp, am1-bcc, dft-resp, or input, or a path to a text file with one charge per atom",
         )
     periodic = structure.cell is not None
     if spec is None:
         if _has_structure_charges(structure):
-            return "input", None
+            return _ChargeSpec("input", None, False, requested)
         if periodic:
             raise ChargeError(
                 "periodic structures require explicit charges",
                 hint="pass --charge charges.txt (one charge per atom) or a structure that already carries charges",
             )
+        if structure.natoms > AUTO_MMFF94_ATOM_THRESHOLD:
+            structure.add_warning(
+                "CHARGE_AUTO_LARGE_MOLECULE",
+                f"{structure.natoms} atoms exceed {AUTO_MMFF94_ATOM_THRESHOLD}; using MMFF94 charges (pass --charge to override)",
+                atom_count=structure.natoms,
+                effective_method="mmff94",
+            )
+            return _ChargeSpec("mmff94", None, False, requested)
         if structure.natoms > AUTO_AM1BCC_ATOM_THRESHOLD:
             structure.add_warning(
                 "CHARGE_AUTO_LARGE_MOLECULE",
@@ -198,11 +295,44 @@ def _resolve_charge(config: PipelineConfig, structure: Structure) -> tuple[str, 
                 atom_count=structure.natoms,
                 effective_method="am1-bcc",
             )
-            return "am1-bcc", None
-        return "resp", None
+            return _ChargeSpec("am1-bcc", None, False, requested)
+        return _ChargeSpec("resp", None, False, requested)
     if periodic and spec != "input":
         raise ChargeError("periodic structures require --charge input with explicit charges; ESP/population fitting is not applied to a unit cell")
-    return spec, None
+    _check_charge_size(spec, dft_geometry, structure.natoms)
+    return _ChargeSpec(spec, None, dft_geometry, requested)
+
+
+def _check_charge_size(method: str, dft_geometry: bool, natoms: int) -> None:
+    if dft_geometry:
+        if natoms > MAX_DFT_GEOMETRY_ATOMS:
+            raise ChargeError(
+                f"dft charge models support at most {MAX_DFT_GEOMETRY_ATOMS} atoms (got {natoms})",
+                hint="use the same model without the dft- prefix for a force-field pre-optimisation, or --charge mmff94",
+            )
+        return
+    if method in _QC_METHODS and natoms > MAX_DFT_CHARGE_ATOMS:
+        raise ChargeError(
+            f"{method} supports at most {MAX_DFT_CHARGE_ATOMS} atoms (got {natoms})",
+            hint="use --charge am1-bcc (up to a few hundred atoms) or --charge mmff94 (thousands)",
+        )
+    if method == "am1-bcc" and natoms > MAX_AM1BCC_ATOMS:
+        raise ChargeError(
+            f"am1-bcc supports at most {MAX_AM1BCC_ATOMS} atoms (got {natoms})",
+            hint="use --charge mmff94 for purely empirical charges",
+        )
+
+
+def _preopt_method(config: PipelineConfig, spec: _ChargeSpec) -> str:
+    if config.preopt != "auto":
+        return config.preopt
+    if spec.dft_geometry:
+        return "dft"
+    if spec.method == "input":
+        return "none"
+    if spec.method == "mmff94":
+        return "mmff94"
+    return "uff"
 
 
 def _has_structure_charges(structure: Structure) -> bool:
@@ -217,8 +347,6 @@ def _write_disclosure(
     disclose_dir: Path,
     config: PipelineConfig,
 ) -> dict[str, Path]:
-    """Write only the hidden sidecars a reader actually needs."""
-
     artifacts: dict[str, Path] = {}
     if audit.warnings:
         disclose_dir.mkdir(parents=True, exist_ok=True)
@@ -242,8 +370,18 @@ def _notes_text(structure: Structure, params: ParameterSet, audit: Audit) -> str
         f"structure: {structure.name}",
         f"force field: {params.force_field}",
         "",
-        "warnings:",
+        "parameter audit (GAFF matched / total):",
     ]
+    audit_data = params.metadata.get("parameter_audit", {})
+    for kind in ("bonds", "angles", "dihedrals", "impropers"):
+        values = audit_data.get(kind, {})
+        if values:
+            lines.append(f"  {kind}: {values.get('matched', 0)} / {values.get('total', 0)}")
+    omitted = params.metadata.get("omitted_terms", {})
+    if omitted.get("dihedrals") or omitted.get("impropers"):
+        lines.append(f"  omitted dihedrals: {len(omitted.get('dihedrals', []))}")
+        lines.append(f"  omitted impropers: {len(omitted.get('impropers', []))}")
+    lines.extend(["", "warnings:"])
     lines.extend(f"  [{warning.get('code', 'LFT_WARNING')}] {warning.get('message', '')}" for warning in audit.warnings)
     lines.append("")
     return "\n".join(lines)
@@ -285,16 +423,24 @@ def _check_overwrite(config: PipelineConfig, output_dir: Path) -> None:
     if config.output == "gromacs":
         candidates = [output_dir / f"{stem}{suffix}" for suffix in (".itp", ".top", ".gro", ".mdp")]
     else:
-        candidates = [output_dir / f"{stem}{suffix}" for suffix in (".data", ".in")]
+        candidates = []
+        if config.lammps_data:
+            candidates.extend([output_dir / f"{stem}{suffix}" for suffix in (".data", ".in")])
         if config.emit_lt:
-            candidates.append(output_dir / f"{stem}.lt")
-            candidates.append(output_dir / "system.lt")
+            candidates.extend([output_dir / f"{stem}.lt", output_dir / "system.lt"])
     existing = [path.name for path in candidates if path.exists()]
     if existing:
         raise InputError(f"output already exists: {', '.join(existing)}", hint="pass --force to overwrite, or use --outdir")
 
 
-def _run_engine_smoke(config: PipelineConfig, artifacts: dict[str, Path], output_dir: Path, audit: Audit) -> dict[str, Path]:
+def _run_engine_smoke(
+    config: PipelineConfig,
+    structure: Structure,
+    params: ParameterSet,
+    artifacts: dict[str, Path],
+    output_dir: Path,
+    audit: Audit,
+) -> dict[str, Path]:
     result_paths: dict[str, Path] = {}
     if config.output == "gromacs":
         result = grompp(workdir=output_dir, mdp=artifacts["mdp"].name, gro=artifacts["gro"].name, top=artifacts["top"].name, output="lft_smoke.tpr")
@@ -306,7 +452,15 @@ def _run_engine_smoke(config: PipelineConfig, artifacts: dict[str, Path], output
         audit.task("engine_smoke", engine="gromacs", command=result.command, returncode=result.returncode)
     else:
         project_root = Path(__file__).resolve().parents[2]
-        result = run_lammps(workdir=output_dir, input_file=artifacts["input"].name, project_root=project_root)
+        if config.lammps_data and "input" in artifacts:
+            smoke_dir = output_dir
+            input_name = artifacts["input"].name
+        else:
+            smoke_dir = output_dir / f"{structure.name}.lft" / "work" / "smoke"
+            smoke_dir.mkdir(parents=True, exist_ok=True)
+            write_lammps(structure, params, smoke_dir, emit_lt=False, emit_data=True, emit_image_map=False)
+            input_name = f"{structure.name}.in"
+        result = run_lammps(workdir=smoke_dir, input_file=input_name, project_root=project_root)
         stdout = output_dir / "lammps.stdout"
         stderr = output_dir / "lammps.stderr"
         stdout.write_text(result.stdout)

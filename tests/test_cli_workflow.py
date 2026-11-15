@@ -14,27 +14,37 @@ from lft.pipeline import _resolve_charge
 _CHARGED_XYZ = "3\nwater\nO 0.000 0.000 0.120 -0.8\nH 0.760 0.000 -0.480 0.4\nH -0.760 0.000 -0.480 0.4\n"
 
 
-def test_cli_default_writes_runnable_lammps(tmp_path, monkeypatch, capsys) -> None:
+def test_cli_default_writes_moltemplate_files(tmp_path, monkeypatch, capsys) -> None:
     monkeypatch.chdir(tmp_path)
     (tmp_path / "water.xyz").write_text(_CHARGED_XYZ)
     assert main(["-f", "water.xyz"]) == 0
     out = capsys.readouterr().out
-    assert "water.data" in out and "water.in" in out
-    assert (tmp_path / "water.data").is_file()
-    assert (tmp_path / "water.in").is_file()
+    assert "water.lt" in out and "system.lt" in out
+    assert (tmp_path / "water.lt").is_file()
+    assert (tmp_path / "system.lt").is_file()
+    assert not (tmp_path / "water.data").exists()
     # No JSON sidecars on the happy path.
     assert not list(tmp_path.glob("*.json"))
+
+
+def test_cli_lammpsdata_writes_data_and_input(tmp_path, monkeypatch) -> None:
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "water.xyz").write_text(_CHARGED_XYZ)
+    assert main(["-f", "water.xyz", "--lammpsdata"]) == 0
+    assert (tmp_path / "water.data").is_file()
+    assert (tmp_path / "water.in").is_file()
+    assert not (tmp_path / "water.lt").exists()
 
 
 def test_cli_charge_file_path_and_overwrite_guard(tmp_path, monkeypatch) -> None:
     monkeypatch.chdir(tmp_path)
     (tmp_path / "mol.xyz").write_text("3\nwater\nO 0 0 0.12\nH 0.76 0 -0.48\nH -0.76 0 -0.48\n")
     (tmp_path / "charges.txt").write_text("-0.8\n0.4\n0.4\n")
-    assert main(["-f", "mol.xyz", "--charge", "charges.txt"]) == 0
+    assert main(["-f", "mol.xyz", "--charge", "charges.txt", "--lammpsdata"]) == 0
     assert (tmp_path / "mol.data").is_file()
     # Second run refuses to overwrite unless --force is given.
-    assert main(["-f", "mol.xyz", "--charge", "charges.txt"]) == 2
-    assert main(["-f", "mol.xyz", "--charge", "charges.txt", "--force"]) == 0
+    assert main(["-f", "mol.xyz", "--charge", "charges.txt", "--lammpsdata"]) == 2
+    assert main(["-f", "mol.xyz", "--charge", "charges.txt", "--lammpsdata", "--force"]) == 0
 
 
 def test_cli_rejects_unknown_charge_spec(tmp_path, monkeypatch, capsys) -> None:
@@ -76,7 +86,7 @@ def test_lft_config_supplies_defaults(tmp_path, monkeypatch) -> None:
     assert (tmp_path / "water.itp").is_file()
     assert not (tmp_path / "water.data").exists()
     # An explicit flag still wins over the config file.
-    assert main(["-f", "water.xyz", "-o", "lammps", "--force"]) == 0
+    assert main(["-f", "water.xyz", "-o", "lammps", "--lammpsdata", "--force"]) == 0
     assert (tmp_path / "water.data").is_file()
 
 

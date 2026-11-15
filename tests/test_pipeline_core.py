@@ -114,9 +114,14 @@ def test_pipeline_writes_runnable_artifacts(tmp_path) -> None:
     gromacs = run_pipeline(PipelineConfig(structure_path, output="gromacs", charge="input", outdir=tmp_path / "gromacs"))
     assert all(gromacs.artifacts[key].exists() for key in ("itp", "top", "gro", "mdp"))
     lammps = run_pipeline(PipelineConfig(structure_path, output="lammps", charge="input", outdir=tmp_path / "lammps"))
-    assert all(lammps.artifacts[key].exists() for key in ("data", "input"))
-    assert "lt" not in lammps.artifacts
+    assert all(lammps.artifacts[key].exists() for key in ("lt", "system_lt"))
+    assert "data" not in lammps.artifacts
     assert "normalized_ir" not in lammps.artifacts
+    lammps_data = run_pipeline(
+        PipelineConfig(structure_path, output="lammps", charge="input", lammps_data=True, emit_lt=False, outdir=tmp_path / "lammps-data")
+    )
+    assert all(lammps_data.artifacts[key].exists() for key in ("data", "input"))
+    assert "lt" not in lammps_data.artifacts
 
 
 def test_debug_bundle_normalized_json_can_be_loaded_again(tmp_path) -> None:

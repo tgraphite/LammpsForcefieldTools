@@ -75,16 +75,17 @@ def _itp_text(structure: Structure, params: ParameterSet) -> str:
     if structure.dihedrals:
         lines.extend(["", "[ dihedrals ]", "; i j k l funct phase(deg) k(kJ/mol or kJ/mol/rad^2) periodicity"])
         for term, dihedral_parameter in zip(structure.dihedrals, params.dihedral_parameters):
-            # GROMACS functype 2 is a harmonic *improper*, so a proper "harmonic"
-            # dihedral (LAMMPS E=K[1+d cos(n phi)]) must use the proper periodic
-            # form (functype 9) with phase 0/180 to stay equivalent to LAMMPS.
-            function = 9
-            if dihedral_parameter.function == "harmonic":
+            # GROMACS functype 9 is the proper periodic form.  A "harmonic"
+            # dihedral (LAMMPS E=K[1+d cos(n phi)]) is the same function at
+            # phase 0/180, and multi-term GAFF types are written as one line per
+            # Fourier term (GROMACS sums them).
+            terms = dihedral_parameter.fourier_terms()
+            if dihedral_parameter.function == "harmonic" and not dihedral_parameter.terms:
                 phase = 180.0 if abs((dihedral_parameter.phase % 360.0) - 180.0) < 1.0e-8 else 0.0
-            else:
-                phase = dihedral_parameter.phase
-            coefficient = kcal_to_kj(dihedral_parameter.k)
-            lines.append(f"{term.atoms[0]:5d} {term.atoms[1]:5d} {term.atoms[2]:5d} {term.atoms[3]:5d} {function:2d} {phase: .6f} {coefficient: .8f} {dihedral_parameter.periodicity:d} ; source={dihedral_parameter.source} function={dihedral_parameter.function} images={_images(term.atom_images)}")
+                terms = ((dihedral_parameter.k, dihedral_parameter.periodicity, phase),)
+            for k_value, periodicity, phase in terms:
+                coefficient = kcal_to_kj(k_value)
+                lines.append(f"{term.atoms[0]:5d} {term.atoms[1]:5d} {term.atoms[2]:5d} {term.atoms[3]:5d} 9 {phase: .6f} {coefficient: .8f} {periodicity:d} ; source={dihedral_parameter.source} function={dihedral_parameter.function} images={_images(term.atom_images)}")
     if structure.impropers:
         lines.extend(["", "[ dihedrals ]", "; impropers: i j k l funct phase(deg) k(kJ/mol/rad^2)"])
         for term, improper_parameter in zip(structure.impropers, params.improper_parameters):

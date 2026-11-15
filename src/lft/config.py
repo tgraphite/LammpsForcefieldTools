@@ -8,9 +8,17 @@ from pathlib import Path
 from .charges import CHARGE_METHODS
 from .errors import InputError
 
-# Structures with more than this many atoms default to AM1-BCC instead of RESP
-# when no charge model is supplied explicitly.
-AUTO_AM1BCC_ATOM_THRESHOLD = 100
+# Size tiers for the automatic charge model.  They follow the measured cost of
+# each backend: DFT charges are practical up to ~50 atoms, AM1-BCC up to a few
+# hundred, and purely empirical charges up to thousands.
+AUTO_AM1BCC_ATOM_THRESHOLD = 50
+AUTO_MMFF94_ATOM_THRESHOLD = 200
+
+# Hard guards: beyond these sizes the requested model is refused instead of
+# silently taking hours.  Override with an explicit smaller/larger workflow.
+MAX_DFT_GEOMETRY_ATOMS = 50
+MAX_DFT_CHARGE_ATOMS = 200
+MAX_AM1BCC_ATOMS = 500
 
 
 @dataclass(slots=True)
@@ -31,7 +39,15 @@ class PipelineConfig:
     manual_file: Path | None = None
     no_qc: bool = False
     engine_smoke: bool = False
-    emit_lt: bool = False
+    emit_lt: bool = True
+    lammps_data: bool = False
+    preopt: str = "auto"
+    preopt_max_atoms: int = 2000
+    dft_opt_max_atoms: int = MAX_DFT_GEOMETRY_ATOMS
+    dft_opt_max_steps: int = 15
+    current_geometry: bool = False
+    missing_torsion: str = "error"
+    missing_improper: str = "omit"
     debug: bool = False
     force: bool = False
 
@@ -45,6 +61,16 @@ class PipelineConfig:
             raise InputError(f"unsupported force field {self.force_field!r}")
         if self.qc_backend not in {"pyscf", "auto"}:
             raise InputError(f"unsupported QC backend {self.qc_backend!r}")
+        if self.preopt not in {"auto", "none", "uff", "mmff94", "dft"}:
+            raise InputError(f"unsupported pre-optimisation engine {self.preopt!r}")
+        if self.missing_torsion not in {"error", "allow"}:
+            raise InputError(f"missing_torsion must be 'error' or 'allow', got {self.missing_torsion!r}")
+        if self.missing_improper not in {"omit", "amber", "k10"}:
+            raise InputError(f"missing_improper must be omit/amber/k10, got {self.missing_improper!r}")
+        if self.preopt_max_atoms < 0 or self.dft_opt_max_atoms < 1:
+            raise InputError("pre-optimisation atom limits must be positive")
+        if self.dft_opt_max_steps < 1:
+            raise InputError("dft_opt_max_steps must be positive")
         if self.charge is not None and not isinstance(self.charge, str):
             raise InputError(f"charge spec must be a method name or file path, got {self.charge!r}")
         if int(self.net_charge) != self.net_charge:
@@ -84,6 +110,14 @@ class PipelineConfig:
             "no_qc": self.no_qc,
             "engine_smoke": self.engine_smoke,
             "emit_lt": self.emit_lt,
+            "lammps_data": self.lammps_data,
+            "preopt": self.preopt,
+            "preopt_max_atoms": self.preopt_max_atoms,
+            "dft_opt_max_atoms": self.dft_opt_max_atoms,
+            "dft_opt_max_steps": self.dft_opt_max_steps,
+            "current_geometry": self.current_geometry,
+            "missing_torsion": self.missing_torsion,
+            "missing_improper": self.missing_improper,
             "debug": self.debug,
             "force": self.force,
         }

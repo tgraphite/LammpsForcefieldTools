@@ -45,9 +45,17 @@ python -m pytest -q
 lft -f molecule.mol2
 ```
 
-在当前目录写出 `molecule.data` 和 `molecule.in`，可直接运行：
+在当前目录写出 `molecule.lt` 和 `system.lt`（moltemplate 格式）。用 moltemplate 生成 LAMMPS 输入：
 
 ```bash
+moltemplate.sh system.lt
+lmp -in run.in   # run.in 可由 run.in.EXAMPLE 改写，或自行 include system.in.init/data/settings
+```
+
+需要传统的 `molecule.data` + `molecule.in` 时加 `--lammpsdata`：
+
+```bash
+lft -f molecule.mol2 --lammpsdata
 lmp -in molecule.in
 ```
 
@@ -67,10 +75,13 @@ lft -f molecule.mol2 --debug                  # 额外写出 <name>.lft/debug.tx
 ### 3.1 完整帮助
 
 ```text
-usage: lft [-h] -f STRUCTURE [-o {lammps,gromacs}]
+usage: lft [-h] [-f STRUCTURE] [-o {lammps,gromacs}]
            [--ff {gaff,gaff+uff,uff,manual}] [--charge METHOD|FILE]
            [--net-charge NET_CHARGE] [--mult MULTIPLICITY] [--outdir OUTDIR]
-           [--force] [--debug] [-V]
+           [--lammpsdata] [--preopt {auto,none,uff,mmff94,dft}]
+           [--current-geometry] [--allow-missing-torsions]
+           [--generic-improper {omit,amber,k10}] [--force] [--debug]
+           [--check-update] [--no-update-check] [-V]
 
 Generate ready-to-run LAMMPS or GROMACS force field and topology files.
 ```
@@ -86,8 +97,15 @@ Generate ready-to-run LAMMPS or GROMACS force field and topology files.
 | `--net-charge` | `0` | 分子形式电荷（整数） |
 | `--mult`, `--multiplicity` | `1` | 自旋多重度 |
 | `--outdir` | 当前目录 | 产物目录 |
+| `--lammpsdata` | 关闭 | 改写 `<name>.data` + `<name>.in`，而不是 moltemplate 文件 |
+| `--preopt` | `auto` | 几何预优化：`auto`、`none`、`uff`、`mmff94`、`dft` |
+| `--current-geometry` | 关闭 | 键长/键角平衡值取当前几何（构象专用；会打印 INFO） |
+| `--allow-missing-torsions` | 关闭 | 无 GAFF 参数的二面角省略而不是报错 |
+| `--generic-improper` | `omit` | 无参 improper 策略：`omit`、`amber`（1.1 kcal/mol）、`k10` |
 | `--force` | 关闭 | 覆盖已存在的同名产物 |
 | `--debug` | 关闭 | 在 `<name>.lft/` 写纯文本诊断包 |
+| `--check-update` | — | 立即检查 PyPI/配置镜像并退出 |
+| `--no-update-check` | 关闭 | 本次运行跳过自动更新提示 |
 | `-h`, `--help` | — | 显示帮助 |
 | `-V`, `--version` | — | 显示版本 |
 
@@ -105,7 +123,11 @@ Generate ready-to-run LAMMPS or GROMACS force field and topology files.
 | `--manual-file` | 无 | 手动类型/参数 JSON（见 7.4 节） |
 | `--no-qc` | 关闭 | 禁止隐式量化；所需数据必须已由输入提供 |
 | `--engine-smoke` | 关闭 | 生成后调用 `gmx grompp` 或 `lmp` 做输入烟测 |
-| `--moltemplate` | 关闭 | 额外写出 `<name>.lt` 与 `system.lt` |
+| `--moltemplate` | 默认开启 | 与 `--lammpsdata` 同用时额外写出 `<name>.lt` 与 `system.lt` |
+| `--no-lt` | 关闭 | 关闭 moltemplate 产物（必须与 `--lammpsdata` 同用） |
+| `--preopt-max-atoms` | `2000` | 力场预优化的原子数上限，超过则跳过并警告 |
+| `--dft-opt-max-atoms` | `50` | DFT 预优化的原子数上限，超过直接报错 |
+| `--dft-opt-max-steps` | `15` | DFT 几何优化的最大步数（每步一次 SCF 梯度） |
 
 示例：
 
@@ -127,9 +149,10 @@ lft -f molecule.mol2 --engine-smoke
 
 | 项目 | 行为 |
 |---|---|
-| 输出后端 | `lammps` |
+| 输出后端 | `lammps`，小分子默认写 moltemplate（`<name>.lt` + `system.lt`）；`--lammpsdata` 改为 `.data` + `.in` |
 | 力场 | `gaff+uff`：GAFF 优先，缺失类型回退 UFF 并记录警告 |
-| 电荷 | 结构自带电荷 → 直接用；否则 ≤100 原子用 `resp`，>100 原子用 `am1-bcc` 并提示 |
+| 电荷 | 结构自带电荷 → 直接用；否则 ≤50 原子用 `resp`，51–200 用 `am1-bcc`，>200 用 `mmff94` 并提示 |
+| 几何预优化 | `auto`：`mmff94` 用电荷同名优化器，`dft-*` 用 DFT，其余计算型电荷用 UFF；`input` 不预优化（`--preopt` 可强制） |
 | 产物目录 | 当前工作目录，文件名取输入文件主名 |
 | 覆盖 | 默认拒绝；同名产物已存在时要求 `--force` 或换 `--outdir` |
 | 周期体系 | 必须提供显式电荷；未提供直接报错 |
@@ -174,6 +197,19 @@ lft -f molecule.mol2 --engine-smoke
 | `mk` | 内置 pySCF + ESP 拟合 | 单阶段无约束最小二乘 |
 | `resp` | 内置 pySCF + ESP 拟合 | 两阶段 RESP；小分子默认 |
 | `resp2` | 内置 pySCF，含水相单点 | 两阶段 RESP 的气相/水相混合，最慢 |
+| `dft-resp` | pySCF + geometric | 先用 DFT 优化几何，再算 RESP（≤50 原子） |
+| `dft-resp2` | pySCF + geometric | DFT 优化 + 气相/水相 RESP2 |
+| `dft-mk` | pySCF + geometric | DFT 优化 + MK |
+| `dft-cm5` | pySCF + geometric | DFT 优化 + CM5 |
+| `dft-raw_cm5` | pySCF + geometric | DFT 优化 + raw CM5 |
+| `dft-adch` | pySCF + geometric | DFT 优化 + ADCH |
+
+带 `dft-` 前缀的方法先在 DFT 级别优化几何（`--qc` 指定的方法/基组），再在同一几何上算电荷；
+不带前缀的方法先做力场预优化（`mmff94` 用 MMFF94，其他用 UFF），再做单点电荷。
+预优化引擎可用 `--preopt` 覆盖；周期体系暂不预优化。
+
+> `dft-` 的 DFT 几何优化成本远高于力场：10 原子量级通常几十秒，20–30 原子约 5–10 分钟，
+> 50 原子可能到半小时级（默认 15 步、密度拟合、跳过初始 Hessian）。日常小分子优先用不带前缀的方法。
 
 电荷文件格式：
 
@@ -200,21 +236,22 @@ GAFF 覆盖元素：H、B、C、N、O、F、Si、P、S、Cl、Br、I。其他元
 
 ### 7.2 参数模式
 
-- `classic`（默认）：键长/键角取自输入几何，力常数使用确定性默认值；能匹配参考库的项使用参考值。未匹配的键合项标记为 `classic:` 来源并写入警告 `PARAMETER_GENERIC_GUESS`。
-- `hessian`：由外部 Hessian 或内置 pySCF Hessian 投影得到键常数；键角仍使用确定性默认值。必须提供 `--hessian-file` 或允许 QC。
+- `classic`（默认）：键长/键角取自输入几何，力常数由内置 GAFF 参数库覆盖（键、角、二面角、improper、LJ）。库随 wheel 一起安装，不再依赖 `references/`。未匹配项标记为 `classic:` 来源并写入警告。
+- `hessian`：由外部 Hessian 或内置 pySCF Hessian 的全 3×3 块投影得到键常数，并用经验因子标定到 GAFF 量级；键角/二面角仍是通用值，来源会如实标为 `generic:`，不会伪装成 Hessian。必须提供 `--hessian-file` 或允许 QC。
 
-> 当前版本的经典键合参数库尚不完整，二面角对 UFF/共轭项使用占位符。用于定量生产前请检查 `<name>.lft/notes.txt`，或用 `--manual-file` 覆盖关键参数。
+> 缺失项策略：proper 二面角无 GAFF 参数时默认**报错**（`--allow-missing-torsions` 可省略，线性中心会自动省略）；improper 无参数时默认**不构建**（`--generic-improper amber` 可改用 AMBER 的 1.1 kcal/mol 通用值）。
 
 ### 7.3 二面角表示
 
-所有 proper 二面角统一为单一周期形式：
+所有 proper 二面角统一为周期形式（可多项）：
 
 ```text
-E = K [1 + cos(n φ − δ)]
+E = Σ_i K_i [1 + cos(n_i φ − δ_i)]
 ```
 
-- LAMMPS：`dihedral_style fourier`，K 单位 kcal/mol
-- GROMACS：functype 9，K 单位 kJ/mol
+- LAMMPS：`dihedral_style fourier`，系数写成 `type m K1 n1 d1 ...`，K 单位 kcal/mol；不使用任何 hybrid 语义
+- GROMACS：functype 9，每个 Fourier 项一行，GROMACS 自动求和；K 单位 kJ/mol
+- GAFF 的多项二面角（2–4 项）会完整保留，不再只取最后一项
 
 ### 7.4 手动参数文件
 
@@ -242,6 +279,8 @@ E = K [1 + cos(n φ − δ)]
 
 - 含晶胞的结构只接受显式电荷：`--charge input` 加结构自带电荷，或 `--charge charges.txt`。
 - 周期结构若指定 `resp`、`am1-bcc` 等拟合方法会直接报错，避免把气相 ESP 拟合套到晶胞。
+- 周期结构**不做几何预优化**（`--preopt` 会被跳过并告警），因为单分子力场优化不适合晶胞。
+- 周期 LAMMPS 输出默认 `lj/cut/coul/long 10.0` + `kspace_style pppm 1.0e-4`；若净电荷非零则自动退回 10 Å 直接截断并写 `PERIODIC_CHARGED_CUTOFF` 警告。
 - 跨胞面的键、角、二面角带整数镜像位移；当周期图存在无法用单一全局镜像表示的 winding 时，会写出 `<name>.lft/image_map.json` 并给出 `LAMMPS_PERIODIC_LIFT_SIDECAR` 警告。
 - GROMACS 侧跨镜像键由 PBC 处理；非周期输入会补一个有限兼容盒并记录警告。
 
@@ -251,10 +290,19 @@ E = K [1 + cos(n φ − δ)]
 
 ### 9.1 LAMMPS（默认）
 
+默认写 moltemplate：
+
 | 文件 | 内容 |
 |---|---|
-| `<name>.data` | `real` 单位、`atom_style full`、坐标、键/角/二面角/improper、原子类型与系数 |
-| `<name>.in` | `units`、`pair_style lj/cut/coul/cut 10.0`、`bond_style harmonic`、`angle_style harmonic`、`dihedral_style fourier`、`improper_style cvff`、`special_bonds` 与运行设置 |
+| `<name>.lt` | 单个 molecule 模板：原子、键、角、二面角、improper 与系数；`In Init` 放 style，`In Settings` 放 `kspace_style`（周期）与全部 coeff |
+| `system.lt` | 实例化模板并写 `Data Boundary` |
+
+`--lammpsdata` 时写传统 LAMMPS 输入（周期体系自动启用 PPPM）：
+
+| 文件 | 内容 |
+|---|---|
+| `<name>.data` | `real` 单位、`atom_style full`、坐标、键/角/二面角/improper、去重后的类型与系数 |
+| `<name>.in` | `units`、`pair_style lj/cut/coul/long 10.0`（周期）或 `lj/cut/coul/cut 10.0`（非周期）、`bond_style harmonic`、`angle_style harmonic`、`dihedral_style fourier`、`improper_style cvff`、`read_data` 后接 `kspace_style pppm 1.0e-4`、`special_bonds` 与运行设置 |
 | `<name>.lt`、`system.lt` | 仅在 `--moltemplate` 时生成 |
 
 ### 9.2 GROMACS
@@ -307,6 +355,11 @@ E = K [1 + cos(n φ − δ)]
 | `param_dir` | 参考参数目录 |
 | `external_atomtype` | 是否调用外部 `atomtype` 对照 |
 | `am1bcc_external` | 是否调用外部 AM1-BCC 对照 |
+| `update_check` | 自动更新提示开关：`on` / `off`（默认 `on`） |
+| `update_interval_hours` | 检查与提示的最短间隔（默认 24） |
+| `update_timeout_s` | 单源网络超时（默认 1.5 秒） |
+| `update_source` | 单个 JSON 版本端点 |
+| `update_sources` | 逗号分隔的多个源（JSON 或 PEP 503 简单索引） |
 
 ### 10.2 环境变量
 
@@ -324,6 +377,26 @@ E = K [1 + cos(n φ − δ)]
 | `LFT_AM1BCC_OPTIMIZE` | AM1-BCC 几何优化：`yes` / `no`（默认）/ `auto`（≤200 原子） |
 | `LFT_APP_ORCA` | ORCA 路径（兼容保留） |
 | `LFT_PARAM_DIR` | 参考参数目录 |
+| `LFT_NO_UPDATE_CHECK` | 设为 `1` 关闭自动更新检查 |
+| `LFT_UPDATE_CHECK` | 设为 `0` 关闭自动更新检查 |
+| `LFT_UPDATE_URL` | 自定义 JSON 版本端点 |
+| `LFT_UPDATE_INDEX` | 自定义 PEP 503 简单索引 |
+| `LFT_UPDATE_INTERVAL_HOURS` | 覆盖检查间隔 |
+| `LFT_UPDATE_TIMEOUT_S` | 覆盖单源超时 |
+
+### 10.3 更新检查
+
+`lft` 在交互终端启动时做一次**只提示、不安装**的版本检查：
+
+- 默认每 24 小时最多检查一次，结果缓存到 `$XDG_CACHE_HOME/lft/update.json`。
+- 检查在后台线程执行，单源超时 1.5 秒，不阻塞管线，也不影响退出码。
+- 同时查询 PyPI、`PIP_INDEX_URL`、`LFT_UPDATE_URL` / `LFT_UPDATE_INDEX`，取最高版本。
+- 发现新版本时只在 stderr 打印一行提示，例如：
+  `[lft NOTICE] new version 1.2.0 available (current 1.1.0): pip install -U lammps-forcefield-tools`
+- 非交互终端、`CI`、`--version` / `--help` 自动跳过。
+- 关闭：`LFT_NO_UPDATE_CHECK=1` 或 `update_check = off`；手动检查：`lft --check-update`；
+  单次跳过：`lft --no-update-check -f ...`。
+- `lft` 不会自动下载或执行更新；升级始终由用户通过 pip/uv 完成。
 
 ---
 

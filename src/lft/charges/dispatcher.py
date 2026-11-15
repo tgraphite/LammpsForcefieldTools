@@ -21,9 +21,23 @@ from .empirical import assign_am1bcc, assign_mmff94
 from .input import apply_input_charges, read_charge_file
 from .resp import fit_resp, fit_resp_proxy, mix_resp2
 
-CHARGE_METHODS = ("input", "mmff94", "cm5", "raw_cm5", "resp", "resp2", "mk", "adch", "am1-bcc")
+BASE_CHARGE_METHODS = ("input", "mmff94", "cm5", "raw_cm5", "resp", "resp2", "mk", "adch", "am1-bcc")
+#: "dft-" prefix means the geometry is optimised at the DFT level before the
+#: charge model is evaluated.  The charge model itself is the same.
+DFT_CHARGE_METHODS = tuple(f"dft-{name}" for name in ("resp", "resp2", "mk", "cm5", "raw_cm5", "adch"))
+CHARGE_METHODS = BASE_CHARGE_METHODS + DFT_CHARGE_METHODS
 CHARGE_SUM_TOLERANCE = 1.0e-5
 REFERENCE_CHARGE_TOLERANCE = 1.0e-8
+
+
+def charge_base(method: str) -> str:
+    """Return the charge model behind a dft- prefixed method name."""
+
+    return method[4:] if method.startswith("dft-") else method
+
+
+def is_dft_charge(method: str) -> bool:
+    return method.startswith("dft-")
 
 
 def assign_charges(
@@ -36,7 +50,8 @@ def assign_charges(
     workdir: str | Path = ".",
     qc_result: Any | None = None,
 ) -> dict[str, Any]:
-    if method not in CHARGE_METHODS:
+    method = charge_base(method)
+    if method not in BASE_CHARGE_METHODS:
         raise ChargeError(f"unsupported charge method {method!r}; allowed: {', '.join(CHARGE_METHODS)}")
     structure.declared_net_charge = float(net_charge)
     provided = read_charge_file(charge_file) if charge_file else None

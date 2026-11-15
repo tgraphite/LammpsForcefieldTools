@@ -25,12 +25,13 @@ lmp -in molecule.in           # 直接运行
 | 连接性 | 显式键优先；无键结构按共价半径与价键上限自动建键 |
 | 拓扑 | 键、角、二面角、improper、1-4 pair，支持周期镜像 |
 | 原子类型 | GAFF 规则引擎；`gaff+uff` 自动回退；支持纯 UFF 与手动映射 |
-| 电荷 | 输入、MMFF94、AM1-BCC、RESP/RESP2、MK、CM5/raw-CM5、ADCH |
-| 量化 | 内置 pySCF：单点、PCM、Hessian、ESP，无外部量化程序依赖 |
-| 参数化 | 经典参数 + Hessian 投影；手动参数 JSON |
-| LAMMPS 输出 | `real` 单位、`atom_style full`、`.data` + `.in`，可选 moltemplate |
+| 电荷 | 输入、MMFF94、AM1-BCC、RESP/RESP2、MK、CM5/raw-CM5、ADCH；`dft-` 前缀先用 DFT 优化几何 |
+| 量化 | 内置 pySCF：单点、PCM、Hessian、ESP；geometric 几何优化，无外部量化程序依赖 |
+| 几何预优化 | 默认 UFF（全元素可用）；`mmff94` 用同名优化器，`dft` 用 pySCF |
+| 参数化 | 内置 GAFF 1.81 参数库（键/角/多项二面角/improper/LJ），离线可用；Hessian 键投影；手动参数 JSON |
+| LAMMPS 输出 | 默认 moltemplate（`.lt` + `system.lt`）；`--lammpsdata` 写 `.data` + `.in`（周期体系启用 PPPM） |
 | GROMACS 输出 | `.itp`、`.top`、`.gro`、`.mdp` |
-| 周期体系 | 镜像感知键合项；晶体必须显式提供电荷 |
+| 周期体系 | 镜像感知键合项；晶体必须显式提供电荷；LAMMPS 周期默认 PPPM |
 | 诊断 | 重要警告直接显示；完整披露写入 `<name>.lft/` |
 
 ---
@@ -82,8 +83,21 @@ lft -f water.mol2
 输出：
 
 ```text
-water.data
-water.in
+water.lt
+system.lt
+```
+
+用 moltemplate 生成 LAMMPS 输入：
+
+```bash
+moltemplate.sh system.lt
+lmp -in run.in          # 由 run.in.EXAMPLE 改写，或自行 include system.in.init/data/settings
+```
+
+要传统的 data/in 文件：
+
+```bash
+lft -f water.mol2 --lammpsdata
 ```
 
 运行 LAMMPS：
@@ -137,8 +151,15 @@ lft -f water.mol2 --engine-smoke
 | `--net-charge` | `0` | 分子形式电荷 |
 | `--mult`, `--multiplicity` | `1` | 自旋多重度 |
 | `--outdir` | 当前目录 | 产物目录 |
+| `--lammpsdata` | 关闭 | 写 `.data` + `.in`，而不是 moltemplate 文件 |
+| `--preopt` | `auto` | 几何预优化：`auto`/`none`/`uff`/`mmff94`/`dft` |
+| `--current-geometry` | 关闭 | 平衡值取当前几何（构象专用，会打印 INFO） |
+| `--allow-missing-torsions` | 关闭 | 无参二面角省略而非报错 |
+| `--generic-improper` | `omit` | 无参 improper：`omit`/`amber`/`k10` |
 | `--force` | 关闭 | 覆盖同名产物 |
 | `--debug` | 关闭 | 写出 `<name>.lft/debug.txt` 诊断包 |
+| `--check-update` | — | 立即检查 PyPI/配置镜像并退出 |
+| `--no-update-check` | 关闭 | 本次运行跳过自动更新提示 |
 | `-V`, `--version` | — | 显示版本 |
 | `-h`, `--help` | — | 显示帮助 |
 
@@ -147,9 +168,10 @@ lft -f water.mol2 --engine-smoke
 未指定 `--charge` 时：
 
 1. 结构自带电荷 → 直接使用；
-2. 非周期且 ≤100 原子 → `resp`；
-3. 非周期且 >100 原子 → `am1-bcc`；
-4. 周期结构 → 必须显式提供电荷，否则报错。
+2. 非周期且 ≤50 原子 → `resp`；
+3. 非周期且 51–200 原子 → `am1-bcc`；
+4. 非周期且 >200 原子 → `mmff94`；
+5. 周期结构 → 必须显式提供电荷，否则报错。
 
 `--charge` 也可以直接给文件路径：
 
@@ -233,6 +255,26 @@ lmp = /opt/lammps/bin/lmp
 | `LFT_OBABEL` | OpenBabel 可执行文件 |
 | `LFT_AM1BCC_OPTIMIZE` | AM1-BCC 几何优化：`yes`/`no`/`auto` |
 | `LFT_ATOMTYPE_EXTERNAL` | 用外部 `atomtype` 做对照 |
+| `LFT_NO_UPDATE_CHECK` | 设为 `1` 关闭自动更新检查 |
+| `LFT_UPDATE_CHECK` | 设为 `0` 关闭自动更新检查 |
+| `LFT_UPDATE_URL` | 自定义 JSON 版本端点 |
+| `LFT_UPDATE_INDEX` | 自定义 PEP 503 简单索引 |
+| `LFT_UPDATE_INTERVAL_HOURS` | 覆盖检查间隔（默认 24） |
+| `LFT_UPDATE_TIMEOUT_S` | 覆盖单源超时（默认 1.5 秒） |
+
+### 更新检查
+
+`lft` 在交互终端启动时做一次**只提示、不安装**的版本检查：
+
+- 默认每 24 小时最多检查一次；结果缓存在 `$XDG_CACHE_HOME/lft/update.json`。
+- 检查在后台线程执行，单源超时 1.5 秒，不阻塞管线，也不影响退出码。
+- 同时查询 PyPI、`PIP_INDEX_URL`、`LFT_UPDATE_URL` / `LFT_UPDATE_INDEX`，取最高版本。
+- 发现新版本时只在 stderr 打印一行提示，例如：
+  `[lft NOTICE] new version 1.2.0 available (current 1.1.0): pip install -U lammps-forcefield-tools`
+- 非交互终端、`CI`、`--version` / `--help` 自动跳过。
+- 关闭：`LFT_NO_UPDATE_CHECK=1` 或 `update_check = off`；手动检查：`lft --check-update`；
+  单次跳过：`lft --no-update-check -f ...`。
+- `lft` 不会自动下载或执行更新；升级始终由你通过 pip/uv 完成。
 
 ---
 
@@ -248,11 +290,11 @@ lmp = /opt/lammps/bin/lmp
 
 ## 已知限制
 
-- 经典键合参数库尚不完整；未命中项使用确定性通用值，并在 `notes.txt` 中标注。
-- UFF/共轭二面角当前使用占位参数，定量工作前应核对或用 `--manual-file` 覆盖。
-- AM1-BCC 默认不做几何优化，电荷依赖输入构象。
-- 周期体系只接受显式电荷，不做 ESP/密度电荷拟合。
-- LAMMPS 输出固定 10 Å 直接截断，未启用 PPPM/PME。
+- 内置 GAFF 键合参数覆盖 GAFF 1.81 的键/角/二面角；极少数角（如 `h4-c-h4`）仍会用几何通用值，`notes.txt` 会标注。
+- UFF 键合项仍是规则占位值；UFF 仅作为 GAFF 不支持元素的后备，定量工作建议核对或 `--manual-file` 覆盖。
+- 纯经验电荷的预优化用 UFF（毫秒级）；`dft-` 电荷会做 DFT 几何优化，成本随原子数快速增长（默认上限 50 原子）。
+- 周期体系只接受显式电荷，不做 ESP/密度电荷拟合；周期结构暂不参与 1:1 测试。
+- 周期 LAMMPS 输出默认 PPPM（`kspace_style pppm 1.0e-4`）；非周期使用 10 Å 直接截断。
 - 不提供构象搜索、体系组装、MD 采样或力场重优化。
 
 ---
