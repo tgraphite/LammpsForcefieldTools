@@ -1,0 +1,23 @@
+{
+  "schema": "lft.ground_truth.charges_vs_multiwfn.v1",
+  "note": "Reference values produced by Multiwfn 2026.8.31 noGUI compiled with gfortran from thirdparty/Multiwfn_2026.8.31_src_Linux (see _archive/qc/README.md). Wavefunctions are B3LYP/sto-3g computed by PySCF 2.14 on the geometry below.",
+  "molecules": {
+    "water": {
+      "geometry_angstrom": [
+        ["O", [0.0, 0.0, 0.0]],
+        ["H", [0.96, 0.0, 0.0]],
+        ["H", [-0.24, 0.93, 0.0]]
+      ],
+      "net_charge": 0,
+      "multiwfn_hirshfeld": [-0.30720421, 0.15361469, 0.15358953],
+      "multiwfn_cm5": [-0.64121070, 0.32071474, 0.32049596],
+      "multiwfn_adch": [-0.59279498, 0.29650041, 0.29629458]
+    },
+    "methyl_benzoate": {
+      "mol2": "references/sobtop/examples/Methyl_benzoate/Methyl_benzoate.mol2",
+      "net_charge": 0,
+      "multiwfn_cm5": [-0.09376600, -0.09767879, -0.08684312, -0.02141133, -0.08538385, -0.09694205, 0.10140111, 0.10109654, 0.11305061, 0.11337363, 0.10156702, 0.25946786, -0.27980443, -0.24787913, -0.10388059, 0.10868004, 0.10747624, 0.10747624],
+      "multiwfn_adch": [-0.12837635, -0.13130394, -0.12038484, -0.06072010, -0.12059257, -0.13064941, 0.13600406, 0.13551958, 0.14247684, 0.14375971, 0.13616648, 0.25487495, -0.23616405, -0.18907068, -0.16038574, 0.11680812, 0.10601896, 0.10601896]
+    }
+  }
+}

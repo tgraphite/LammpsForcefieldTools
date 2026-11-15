@@ -1,0 +1,17 @@
+id: existing-periodic-fecl2
+stage: S1
+input: references/sobtop/examples/FeCl2/exact/opted_5x5x1.pdb
+input_hash: 4e5bd06d90a48e214aaba141a9e6bf0eaa120f320a41ed033ef1e5a5d97a74e4
+cell: pbc-xy
+net_charge: 0
+multiplicity: 1
+ff: uff
+charge: input
+parameter_mode: classic
+expected_counts:
+  atoms: 75
+  bonds: 150
+  cross_edges: 28
+  winding_rank: 2
+known_limitations:
+  - Requires a sidecar charge artifact for a production run because the PDB has no partial charges.

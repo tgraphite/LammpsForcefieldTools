@@ -1,0 +1,18 @@
+@<TRIPOS>MOLECULE
+*****
+ 5 5 0 0 0
+SMALL
+GASTEIGER
+
+@<TRIPOS>ATOM
+      1 C           0.0000    0.0000    0.0000 C.ar    1  UNL1        0.0222
+      2 C           0.0000    0.0000    0.0000 C.ar    1  UNL1        0.0222
+      3 C           0.0000    0.0000    0.0000 C.ar    1  UNL1        0.0989
+      4 N           0.0000    0.0000    0.0000 N.ar    1  UNL1       -0.2423
+      5 C           0.0000    0.0000    0.0000 C.ar    1  UNL1        0.0989
+@<TRIPOS>BOND
+     1     1     2   ar
+     2     2     3   ar
+     3     3     4   ar
+     4     4     5   ar
+     5     1     5   ar

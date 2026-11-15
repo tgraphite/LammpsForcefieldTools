@@ -1,0 +1,17 @@
+id: existing-periodic-diamond
+stage: S1
+input: references/sobtop/examples/diamond_3x3x3/diamond_3x3x3.pdb
+input_hash: 8254cd0f97f2dcf4c25de2a688be8e706869d906593d11d6cfd719cc7ae33c5d
+cell: pbc-xyz
+net_charge: 0
+multiplicity: 1
+ff: uff
+charge: input
+parameter_mode: classic
+expected_counts:
+  atoms: 216
+  bonds: 432
+  cross_edges: 99
+  winding_rank: 3
+known_limitations:
+  - Requires a sidecar charge artifact for a production run because the PDB has no partial charges.

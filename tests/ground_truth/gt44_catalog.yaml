@@ -1,0 +1,475 @@
+schema: lft.gt44.catalog.v1
+box_target: 1000
+box_target_min: 800
+box_target_max: 1600
+engine_profile: e2e/engine_profile.yaml
+# Per-case acceptance is defined in docs/PROJECT_STATUS.md.
+# status: ready | pending | substitute
+cases:
+  # ---- 5.1 small molecules: typing & charges ----
+  - id: GT-01
+    name: methane
+    status: pending
+    input: null
+    input_note: "obabel -:C --gen3d -omol2 -> methane.mol2"
+    ff: gaff
+    charge: input
+    parameter_mode: classic
+    box_kind: molecule
+    expected_counts: {atoms: 5}
+  - id: GT-02
+    name: ethanol
+    status: pending
+    input: null
+    input_note: "obabel -:CCO --gen3d -omol2 -> ethanol.mol2"
+    ff: gaff
+    charge: mmff94
+    parameter_mode: classic
+    box_kind: molecule
+  - id: GT-03
+    name: acetone
+    status: pending
+    input: null
+    input_note: "obabel -:CC(=O)C --gen3d -omol2"
+    ff: gaff
+    charge: cm5
+    parameter_mode: classic
+    box_kind: molecule
+  - id: GT-04
+    name: pyridine
+    status: pending
+    input: null
+    input_note: "obabel -:c1ccncc1 --gen3d -omol2"
+    ff: gaff
+    charge: raw_cm5
+    parameter_mode: classic
+    box_kind: molecule
+  - id: GT-05
+    name: phenol
+    status: pending
+    input: null
+    input_note: "obabel -:c1ccc(O)cc1 --gen3d -omol2"
+    ff: gaff
+    charge: adch
+    parameter_mode: classic
+    box_kind: molecule
+  - id: GT-06
+    name: acetamide
+    status: pending
+    input: null
+    input_note: "obabel -:CC(N)=O --gen3d -omol2"
+    ff: gaff
+    charge: am1-bcc
+    parameter_mode: classic
+    box_kind: molecule
+  - id: GT-07
+    name: imidazole
+    status: pending
+    input: null
+    input_note: "obabel -:c1cnc[nH]1 --gen3d -omol2"
+    ff: gaff
+    charge: input
+    parameter_mode: classic
+    box_kind: molecule
+  - id: GT-08
+    name: naphthalene
+    status: pending
+    input: null
+    input_note: "obabel -:c1ccc2ccccc2c1 --gen3d -omol2"
+    ff: gaff
+    charge: mmff94
+    parameter_mode: classic
+    box_kind: molecule
+  - id: GT-09
+    name: acetate
+    status: pending
+    input: null
+    input_note: "obabel -:CC(=O)[O-] --gen3d -omol2"
+    ff: gaff
+    charge: resp
+    parameter_mode: classic
+    net_charge: -1
+    box_kind: molecule
+  - id: GT-10
+    name: methylammonium
+    status: pending
+    input: null
+    input_note: "obabel -:[NH3+]C --gen3d -omol2"
+    ff: gaff
+    charge: resp
+    parameter_mode: classic
+    net_charge: 1
+    box_kind: molecule
+  - id: GT-11
+    name: guanidinium_kcl
+    status: pending
+    input: null
+    input_note: "manual assembly: guanidinium + K + Cl"
+    ff: gaff+uff
+    charge: resp2
+    parameter_mode: classic
+    box_kind: molecule
+  - id: GT-12
+    name: sulfate
+    status: pending
+    input: null
+    input_note: "obabel -:S(=O)(=O)([O-])[O-] --gen3d -omol2"
+    ff: gaff+uff
+    charge: input
+    parameter_mode: classic
+    net_charge: -2
+    box_kind: molecule
+  - id: GT-13
+    name: nacl_pair
+    status: pending
+    input: null
+    input_note: "hand-written pqr: Na+ Cl- pair"
+    ff: uff
+    charge: input
+    parameter_mode: classic
+    box_kind: molecule
+  - id: GT-14
+    name: zinc_acetate
+    status: pending
+    input: null
+    input_note: "obabel Zn(OAc)2 structure"
+    ff: gaff+uff
+    charge: mmff94
+    parameter_mode: classic
+    box_kind: molecule
+  - id: GT-15
+    name: difluorobenzene
+    status: pending
+    input: null
+    input_note: "obabel -:c1cc(F)cc(F)c1 --gen3d -omol2"
+    ff: gaff
+    charge: mmff94
+    parameter_mode: classic
+    box_kind: molecule
+  - id: GT-16
+    name: mgcl2
+    status: pending
+    input: null
+    input_note: "MgCl2 crystal CIF + sidecar charges"
+    ff: uff
+    charge: input
+    parameter_mode: classic
+    box_kind: crystal
+
+  # ---- 5.2 small molecules: QC charges & Hessian (L4 still runs with input charges) ----
+  - id: GT-17
+    name: ethanol_hess_seminario
+    status: pending
+    input: null
+    input_note: "same ethanol.mol2 as GT-02"
+    ff: gaff
+    charge: resp
+    parameter_mode: hessian
+    hessian_method: seminario
+    box_kind: molecule
+  - id: GT-18
+    name: ethanol_hess_mseminario
+    status: pending
+    input: null
+    input_note: "same ethanol.mol2"
+    ff: gaff
+    charge: resp
+    parameter_mode: hessian
+    hessian_method: mseminario
+    box_kind: molecule
+  - id: GT-19
+    name: acetone_hess_m2seminario
+    status: pending
+    input: null
+    input_note: "same acetone.mol2"
+    ff: gaff
+    charge: resp
+    parameter_mode: hessian
+    hessian_method: m2seminario
+    box_kind: molecule
+  - id: GT-20
+    name: acetamide_hess_drih
+    status: pending
+    input: null
+    input_note: "same acetamide.mol2"
+    ff: gaff
+    charge: resp2
+    parameter_mode: hessian
+    hessian_method: drih
+    box_kind: molecule
+  - id: GT-21
+    name: acetate_hess_cm5
+    status: pending
+    input: null
+    input_note: "same acetate.mol2; cm5->raw_cm5 charged fallback"
+    ff: gaff
+    charge: cm5
+    parameter_mode: hessian
+    hessian_method: seminario
+    net_charge: -1
+    box_kind: molecule
+  - id: GT-22
+    name: methylammonium_hess_msem
+    status: pending
+    input: null
+    input_note: "same methylammonium.mol2"
+    ff: gaff
+    charge: resp
+    parameter_mode: hessian
+    hessian_method: mseminario
+    net_charge: 1
+    box_kind: molecule
+  - id: GT-23
+    name: pyridine_hess_mk
+    status: pending
+    input: null
+    input_note: "same pyridine.mol2 + ORCA .hess"
+    ff: gaff
+    charge: mk
+    parameter_mode: hessian
+    box_kind: molecule
+  - id: GT-24
+    name: phenol_multiwfn_mk
+    status: pending
+    input: null
+    input_note: "same phenol.mol2"
+    ff: gaff
+    charge: mk
+    parameter_mode: classic
+    box_kind: molecule
+  - id: GT-25
+    name: imidazole_multiwfn_resp
+    status: pending
+    input: null
+    input_note: "same imidazole.mol2"
+    ff: gaff
+    charge: resp
+    parameter_mode: classic
+    box_kind: molecule
+  - id: GT-26
+    name: acetamide_resp2
+    status: pending
+    input: null
+    input_note: "same acetamide.mol2; gas/PCM dual SCF"
+    ff: gaff
+    charge: resp2
+    parameter_mode: classic
+    box_kind: molecule
+  - id: GT-27
+    name: naphthalene_xtb_hess
+    status: pending
+    input: null
+    input_note: "same naphthalene.mol2 + xtb hessian"
+    ff: gaff
+    charge: input
+    parameter_mode: hessian
+    box_kind: molecule
+  - id: GT-28
+    name: carbonate_hess_drih
+    status: pending
+    input: null
+    input_note: "obabel -:C(=O)([O-])[O-]"
+    ff: gaff
+    charge: resp
+    parameter_mode: hessian
+    hessian_method: drih
+    net_charge: -2
+    box_kind: molecule
+
+  # ---- 5.3 larger molecules ----
+  - id: GT-29
+    name: caffeine
+    status: pending
+    input: null
+    input_note: "obabel -:Cn1cnc2c1c(=O)n(C)c(=O)n2C --gen3d"
+    ff: gaff
+    charge: mmff94
+    parameter_mode: classic
+    box_kind: molecule
+  - id: GT-30
+    name: cholesterol
+    status: pending
+    input: null
+    input_note: "PubChem CID 5997 mol2"
+    ff: gaff
+    charge: mmff94
+    parameter_mode: classic
+    box_kind: molecule
+  - id: GT-31
+    name: polyethylene_20mer
+    status: pending
+    input: null
+    input_note: "synthesize PE 20-mer mol2"
+    ff: gaff
+    charge: mmff94
+    parameter_mode: classic
+    box_kind: molecule
+  - id: GT-32
+    name: pmma_10mer
+    status: pending
+    input: null
+    input_note: "synthesize PMMA 10-mer mol2"
+    ff: gaff+uff
+    charge: mmff94
+    parameter_mode: classic
+    box_kind: molecule
+  - id: GT-33
+    name: dendrimer
+    status: pending
+    input: null
+    input_note: "synthesize branched dendrimer ~200 atoms"
+    ff: gaff+uff
+    charge: input
+    parameter_mode: classic
+    box_kind: molecule
+  - id: GT-34
+    name: neoprene_crosslink
+    status: pending
+    input: references/sobtop/examples/polymer/Neoprene_10_cross.mol2
+    ff: gaff+uff
+    charge: mmff94
+    parameter_mode: classic
+    box_kind: molecule
+    known_limitation: "input geometry unrelaxed (min nonbonded 1.1 A); needs relaxed mol2 before L4"
+
+  # ---- 5.4 periodic / crystal ----
+  - id: GT-35
+    name: polyethylene_1d
+    status: pending
+    input: null
+    input_note: "synthesize PE 1D periodic chain (cell with c-axis repeat)"
+    ff: gaff
+    charge: input
+    parameter_mode: classic
+    box_kind: crystal
+  - id: GT-36
+    name: polyacetylene_1d
+    status: pending
+    input: null
+    input_note: "synthesize polyacetylene 1D periodic chain"
+    ff: gaff
+    charge: input
+    parameter_mode: classic
+    box_kind: crystal
+  - id: GT-37
+    name: graphene_2d
+    status: pending
+    input: null
+    input_note: "synthesize graphene 2D primitive cell (CIF)"
+    ff: gaff
+    charge: input
+    parameter_mode: classic
+    box_kind: crystal
+  - id: GT-38
+    name: diamond
+    status: ready
+    input: references/sobtop/examples/diamond_3x3x3/diamond_3x3x3.pdb
+    ff: uff
+    charge: input
+    parameter_mode: classic
+    box_kind: crystal
+    expected_counts: {atoms: 216, bonds: 432, cross_edges: 99, winding_rank: 3}
+  - id: GT-39
+    name: sio2
+    status: ready
+    input: references/sobtop/examples/SiO2_3x3x3/SiO2_3x3x3.pdb
+    ff: uff
+    charge: input
+    parameter_mode: classic
+    box_kind: crystal
+    expected_counts: {atoms: 324, bonds: 432, cross_edges: 54, winding_rank: 3}
+  - id: GT-40
+    name: nacl_crystal
+    status: pending
+    input: null
+    input_note: "NaCl conventional cell CIF"
+    ff: uff
+    charge: input
+    parameter_mode: classic
+    box_kind: crystal
+  - id: GT-41
+    name: mgo
+    status: pending
+    input: null
+    input_note: "MgO conventional cell CIF"
+    ff: uff
+    charge: input
+    parameter_mode: classic
+    box_kind: crystal
+  - id: GT-42
+    name: mof5
+    status: ready
+    input: references/sobtop/examples/MOF-5/MOF-5.mol2
+    ff: gaff+uff
+    charge: input
+    parameter_mode: classic
+    box_kind: molecule
+  - id: GT-43
+    name: fecl2
+    status: ready
+    input: references/sobtop/examples/FeCl2/exact/opted_5x5x1.pdb
+    ff: uff
+    charge: input
+    parameter_mode: classic
+    box_kind: crystal
+    expected_counts: {atoms: 75, bonds: 150, cross_edges: 28, winding_rank: 2}
+  - id: GT-44
+    name: boundary_metamorphic
+    status: ready
+    input: references/sobtop/examples/diamond_3x3x3/diamond_3x3x3.pdb
+    ff: gaff+uff
+    charge: input
+    parameter_mode: classic
+    box_kind: crystal
+    note: "translate atoms across cell face; IR must be invariant"
+
+  # ---- substitutes: methodology validation on available inputs ----
+  - id: S-01
+    name: water_box
+    status: ready
+    substitute: true
+    input: references/sobtop/gt/probes/water.mol2
+    ff: gaff+uff
+    charge: input
+    parameter_mode: classic
+    box_kind: molecule
+    charges: [-0.66, 0.33, 0.33]
+  - id: S-02
+    name: methyl_benzoate
+    status: ready
+    substitute: true
+    input: references/sobtop/examples/Methyl_benzoate/Methyl_benzoate.mol2
+    ff: gaff+uff
+    charge: input
+    parameter_mode: classic
+    box_kind: molecule
+    charges: [0.0]
+  - id: S-03
+    name: sf6
+    status: ready
+    substitute: true
+    input: references/sobtop/examples/SF6/SF6.mol2
+    ff: gaff+uff
+    charge: input
+    parameter_mode: classic
+    box_kind: molecule
+    charges: [0.0]
+  - id: S-04
+    name: ex7helicene
+    status: ready
+    substitute: true
+    input: references/sobtop/examples/exercise/7-helicene.mol2
+    ff: gaff+uff
+    charge: input
+    parameter_mode: classic
+    box_kind: molecule
+    charges: [0.0]
+  - id: S-05
+    name: neoprene_40
+    status: ready
+    substitute: true
+    input: references/sobtop/examples/polymer/Neoprene_40.mol2
+    ff: gaff+uff
+    charge: mmff94
+    parameter_mode: classic
+    box_kind: molecule

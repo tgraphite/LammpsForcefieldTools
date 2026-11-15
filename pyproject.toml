@@ -1,0 +1,69 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lammps-forcefield-tools"
+version = "0.1.0"
+description = "Automated LAMMPS and GROMACS force-field and topology generation from molecular and crystal structures"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "GPL-2.0-only"
+license-files = ["LICENSE"]
+authors = [{ name = "tgraphite" }]
+keywords = [
+    "lammps",
+    "gromacs",
+    "force-field",
+    "topology",
+    "molecular-dynamics",
+    "gaff",
+    "am1-bcc",
+    "resp",
+    "computational-chemistry",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Chemistry",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "pyscf>=2.14",
+    "dftd3>=1.6",
+    "cclib>=1.8",
+    "openbabel-wheel>=3.1.1",
+    "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[project.urls]
+Homepage = "https://github.com/tgraphite/LammpsForcefieldTools"
+Repository = "https://github.com/tgraphite/LammpsForcefieldTools"
+Documentation = "https://github.com/tgraphite/LammpsForcefieldTools/blob/main/docs/MANUAL.md"
+Changelog = "https://github.com/tgraphite/LammpsForcefieldTools/blob/main/docs/CHANGELOG.md"
+Issues = "https://github.com/tgraphite/LammpsForcefieldTools/issues"
+PyPI = "https://pypi.org/project/lammps-forcefield-tools/"
+
+[project.scripts]
+lft = "lft.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+lft = ["lft.config"]
+"lft.charges.data" = ["*.npz", "*.DAT", "*.DEF"]
+"lft.forcefields.data" = ["*.DAT", "*.DEF"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

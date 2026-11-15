@@ -1,0 +1,60 @@
+schema: lft.e2e.engine_profile.v1
+name: cutoff-real-single-point
+# Frozen cross-engine single-frame acceptance profile (see docs/PROJECT_STATUS.md).
+# Both engines must use identical 1.0 nm full-truncation LJ+Coul so energies are
+# directly comparable without long-range electrostatics differences.
+gromacs:
+  executable: gmx
+  precision: single          # NOTE: this GROMACS build is single precision (~1e-5 relative noise)
+  integrator: md
+  nsteps: 0
+  dt_fs: 1.0
+  coulomb: cut-off
+  coulomb_modifier: None     # disable default Potential-shift -> plain 1/r truncation
+  r_coulomb_nm: 1.0
+  vdw: cut-off
+  vdw_modifier: None
+  r_vdw_nm: 1.0
+  rlist_nm: 1.0
+  verlet_buffer_tolerance: -1
+  combination_rule: 2
+  fudge_lj: 0.5
+  fudge_qq: 0.8333333333
+  explicit_pairs: true       # [ pairs ] written so 1-4 LJ/Coul enter Potential
+lammps:
+  executable: lmp
+  units: real
+  atom_style: full
+  pair_style: lj/cut/coul/cut
+  cutoff_angstrom: 10.0
+  pair_modify: mix arithmetic
+  special_bonds_lj: [0.0, 0.0, 0.5]
+  special_bonds_coul: [0.0, 0.0, 0.8333333333]
+  neighbor_skin_angstrom: 2.0
+  timestep_fs: 1.0
+coordinate_consistency:
+  grid_angstrom: 0.01         # runner rounds coords to this grid so .gro is lossless
+moltemplate:
+  executable: moltemplate.sh
+packmol:
+  executable: packmol
+box:
+  target_atoms: 1000
+  target_min: 800
+  target_max: 1600
+  molecule_spacing: "max(4.0 A, 2*diameter+2.0 A)"
+acceptance:
+  charge_sum_tolerance_e: 1.0e-5
+  bond_abs_kj: 1.0e-3
+  angle_abs_kj: 1.0e-3
+  dihedral_abs_kj: 1.0e-3
+  improper_abs_kj: 1.0e-3
+  total_abs_kj: 1.0e-2
+  total_rel: 1.0e-4          # dominated by GROMACS single precision
+known_limitations:
+  - GROMACS build is single precision and does not write LJ-14/Coulomb-14 to the
+    .edr; nonbonded consistency is covered by the total-potential check.
+  - LAMMPS periodic image-lift for cross-image crystal dihedrals is not yet
+    physically consistent; crystal L4 cases are blocked until fixed.
+  - Sobtop improper central-atom selection and missing-type fallback differ for
+    conjugated/ester groups (recorded as known_limitations, not hard failures).

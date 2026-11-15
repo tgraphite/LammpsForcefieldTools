@@ -1,0 +1,30 @@
+# Virtual environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local development data and outputs
+_scratch/
+_archive/
+references/
+thirdparty/
+research/
+workdir/
+*.log
+ATOMTYPE.INF
+log.lammps
+
+# Editors and OS files
+.DS_Store
+.vscode/
+.idea/
+*.swp

@@ -1,0 +1,16 @@
+include README.md
+include LICENSE
+include pyproject.toml
+include lft.config
+include requirements.lock
+recursive-include docs *.md
+recursive-include examples *.md *.mol2 *.xyz *.pdb
+recursive-include tests *.py *.yaml *.json *.mol2 *.pdb *.xyz *.txt
+recursive-include scripts *.py *.sh
+prune _archive
+prune _scratch
+prune references
+prune thirdparty
+prune research
+prune e2e
+global-exclude __pycache__ *.py[cod] *.so *.egg-info

@@ -1,0 +1,581 @@
+{
+  "historical55/acetamide.mol2": {
+    "origin": "_scratch/typer_corpus/acetamide.mol2",
+    "sha256": "1a8b444b93eb0755f7d3bfa662725ef5fff5ba43b41b1adb270818026d7b0fd3"
+  },
+  "supplement/acetamide_h.mol2": {
+    "origin": "_scratch/typer_corpus/acetamide_h.mol2",
+    "sha256": "80244b19499b9f9cfc09093670b579e239420148f81be5693cd5f2ba6ad9a202"
+  },
+  "historical55/acetate.mol2": {
+    "origin": "_scratch/typer_corpus/acetate.mol2",
+    "sha256": "59d1d464ec1eb52a3113e1f31deafa3547b6e1193a46877d562dc1b38c85b390"
+  },
+  "historical55/acetone.mol2": {
+    "origin": "_scratch/typer_corpus/acetone.mol2",
+    "sha256": "7fb8a17427c1edb816e1a3bf7733e5df12de8d1834ad951c5a2840afc6e6b418"
+  },
+  "historical55/acetylene.mol2": {
+    "origin": "_scratch/typer_corpus/acetylene.mol2",
+    "sha256": "d5ca05336f8785b0845e5e7a328b4545853b94ce99522e12b212e130b8cd7b0c"
+  },
+  "historical55/adenine.mol2": {
+    "origin": "_scratch/typer_corpus/adenine.mol2",
+    "sha256": "be388dc1af042f22aba12ea0428d3a542607a76e06ef9e090842b8c37fdb9ce9"
+  },
+  "historical55/allene.mol2": {
+    "origin": "_scratch/typer_corpus/allene.mol2",
+    "sha256": "030abb0c53235070895c0324071c9aeca9e7ed262ed1b183de0ebc173b427fe1"
+  },
+  "historical55/aniline.mol2": {
+    "origin": "_scratch/typer_corpus/aniline.mol2",
+    "sha256": "ecc3c2b3382d8c0a266f73c90a549dbd1bb4e2a1cad437337fde39a8731a7c05"
+  },
+  "historical55/anthracene.mol2": {
+    "origin": "_scratch/typer_corpus/anthracene.mol2",
+    "sha256": "a37f66e5c53836301b70bf2e8cb5ce6eab925093e50cbbf9caeda62da2dae2e5"
+  },
+  "historical55/asparagine.mol2": {
+    "origin": "_scratch/typer_corpus/asparagine.mol2",
+    "sha256": "50ed2bd6b04951e368f9107183d80ee7455c127b0b1ec28dfd654fc225cddcb2"
+  },
+  "historical55/aspartate.mol2": {
+    "origin": "_scratch/typer_corpus/aspartate.mol2",
+    "sha256": "74892d7bf5f6c73659b836e3b8d74d63eec2a1ff690c199bbf209307f37e1e5a"
+  },
+  "historical55/azulene.mol2": {
+    "origin": "_scratch/typer_corpus/azulene.mol2",
+    "sha256": "7e24645aa42734c9b524c37c9e8584ff416c2509c593995c2f0ef444a2521bba"
+  },
+  "historical55/benzaldehyde.mol2": {
+    "origin": "_scratch/typer_corpus/benzaldehyde.mol2",
+    "sha256": "babee857f18305d710d6f96b4a2c3e83f413936d46111e3990db681826e28cda"
+  },
+  "historical55/benzofuran.mol2": {
+    "origin": "_scratch/typer_corpus/benzofuran.mol2",
+    "sha256": "ced61dd10a5e0be1d6519a5d7fa2009e3f167ce2fcdb25079328548a07a6d466"
+  },
+  "historical55/benzoicacid.mol2": {
+    "origin": "_scratch/typer_corpus/benzoicacid.mol2",
+    "sha256": "e4ee87e02298759366fc697ffabcc48ab8b1165f7fba6b2815ca3ed7a3bedd33"
+  },
+  "historical55/benzothiophene.mol2": {
+    "origin": "_scratch/typer_corpus/benzothiophene.mol2",
+    "sha256": "8a71a1137e5ce0643aa4a715daf767495254379fe910d9f4a3460ff5848f2815"
+  },
+  "historical55/biphenyl.mol2": {
+    "origin": "_scratch/typer_corpus/biphenyl.mol2",
+    "sha256": "0c54ab9e05cf2e19ca059aee3c792d5ce1b1e5dece6d92cc9f37e665be073669"
+  },
+  "historical55/butadiene.mol2": {
+    "origin": "_scratch/typer_corpus/butadiene.mol2",
+    "sha256": "e3b8830e2d44828bd99098ef54bc8c351832da99941bb6ca35cbfce6c94b65f1"
+  },
+  "historical55/caffeine.mol2": {
+    "origin": "_scratch/typer_corpus/caffeine.mol2",
+    "sha256": "b4657c0e3447b7ac9fce5461cff21d5e7ae1cc7537552ec731ada7fe89e3a36a"
+  },
+  "historical55/cysteine.mol2": {
+    "origin": "_scratch/typer_corpus/cysteine.mol2",
+    "sha256": "9f7e7d2de82893a3866e98648fcd8469cc0e5b5163317416a211166e2e5febae"
+  },
+  "historical55/diethylether.mol2": {
+    "origin": "_scratch/typer_corpus/diethylether.mol2",
+    "sha256": "60ab2f02e5cf4d8ed438dd38525962332a07df10ce9d48e2656781ddaed41aca"
+  },
+  "historical55/dimethylsulfoxide.mol2": {
+    "origin": "_scratch/typer_corpus/dimethylsulfoxide.mol2",
+    "sha256": "cc8e05239c7492c11666638e064f25000a8b4c6ec03f54303f242910fb25cabc"
+  },
+  "historical55/ethanol.mol2": {
+    "origin": "_scratch/typer_corpus/ethanol.mol2",
+    "sha256": "58592e74945d68ecd353811fd1630bf42776463eb008a1edc0d5381de2d8553b"
+  },
+  "historical55/ethylamine.mol2": {
+    "origin": "_scratch/typer_corpus/ethylamine.mol2",
+    "sha256": "92789587ab9e0eca291434b54c401be3cd5a22290362a9bc76ab5e22b0ad03a3"
+  },
+  "historical55/ethylene.mol2": {
+    "origin": "_scratch/typer_corpus/ethylene.mol2",
+    "sha256": "d4343c0c66621491bceb7c89b8bae322ffbb3a26fc6a3df4439ef2421b4718fa"
+  },
+  "historical55/furan.mol2": {
+    "origin": "_scratch/typer_corpus/furan.mol2",
+    "sha256": "f2ef26c75375e0c1853a753c01320a46406f6e5d41aee8801cc2fe83b99ac5a3"
+  },
+  "historical55/glutamate.mol2": {
+    "origin": "_scratch/typer_corpus/glutamate.mol2",
+    "sha256": "00910cec953b6b4ad411b4767dfb3a1a3b765f98c4058059b45e559e4d95871a"
+  },
+  "historical55/glycine.mol2": {
+    "origin": "_scratch/typer_corpus/glycine.mol2",
+    "sha256": "2b59c81e2a6fed3c3342f3e160dae4107a449cd139c48ff5eb8656186159ff8c"
+  },
+  "historical55/histidine.mol2": {
+    "origin": "_scratch/typer_corpus/histidine.mol2",
+    "sha256": "1f00116ac8f86c9f14c62bb6026d8e1817a524b72f5b0698366833248003307b"
+  },
+  "historical55/imidazole.mol2": {
+    "origin": "_scratch/typer_corpus/imidazole.mol2",
+    "sha256": "3a8df65bd0a047c691eee18d51f273ad49d49463f863cec1768535862f51a051"
+  },
+  "historical55/indole.mol2": {
+    "origin": "_scratch/typer_corpus/indole.mol2",
+    "sha256": "eea8c58d3d63e7f663983979dc8924a0de692b9b997e01b4803a14c6f3feab56"
+  },
+  "historical55/isoquinoline.mol2": {
+    "origin": "_scratch/typer_corpus/isoquinoline.mol2",
+    "sha256": "35bf3b438919928b8e338bbe0b3cf83b9b94baebc1e03df5561b27a0e0ce3d55"
+  },
+  "supplement/methane.mol2": {
+    "origin": "_scratch/typer_corpus/methane.mol2",
+    "sha256": "0fb47c8db11815d16043c1d7adc2a7dcabac385f688a8791d1e8b48acfc6eaed"
+  },
+  "historical55/methionine.mol2": {
+    "origin": "_scratch/typer_corpus/methionine.mol2",
+    "sha256": "d6968aac5a5c68cba6158c7f7f23dadd7357aadab67ef6281d7c315bf8a84927"
+  },
+  "historical55/methylammonium.mol2": {
+    "origin": "_scratch/typer_corpus/methylammonium.mol2",
+    "sha256": "02010a86552882b8c89fc0d9d88a9e9c34336ef71916bda0e3dea6f4b9a12a9f"
+  },
+  "historical55/naphthalene.mol2": {
+    "origin": "_scratch/typer_corpus/naphthalene.mol2",
+    "sha256": "b0dc31ba256678680797e21c20b44e680650bb11d321a30420a46a1a78892c97"
+  },
+  "historical55/nitromethane.mol2": {
+    "origin": "_scratch/typer_corpus/nitromethane.mol2",
+    "sha256": "b01f2df30c3b8a936b9615437cf2e0bcfceddc8c653e42f4b231870847142482"
+  },
+  "historical55/phenanthrene.mol2": {
+    "origin": "_scratch/typer_corpus/phenanthrene.mol2",
+    "sha256": "57e0b7bd476cf143c53d2ce8336a581e011278f07896d83cbefa803f48a1dd0c"
+  },
+  "historical55/phenol.mol2": {
+    "origin": "_scratch/typer_corpus/phenol.mol2",
+    "sha256": "c64a32f0fca1dc2aebc9ec9ac6cc5b18a75c2a9e1ac7ec7319dd15bffe3639ea"
+  },
+  "historical55/phenylalanine.mol2": {
+    "origin": "_scratch/typer_corpus/phenylalanine.mol2",
+    "sha256": "f2e4eed428864d033e5b1c4a72d94ab533f49413fe97be1e6f7d45ae50f2cb68"
+  },
+  "historical55/proline.mol2": {
+    "origin": "_scratch/typer_corpus/proline.mol2",
+    "sha256": "03b2662821a73423bd8b0ccc05c475514b7cb289f5e37f441dda8c473c5776c3"
+  },
+  "historical55/purine.mol2": {
+    "origin": "_scratch/typer_corpus/purine.mol2",
+    "sha256": "b44ebbc2e3b976effe65451af3da85354767511d1607c743b9ecc2341575c81c"
+  },
+  "historical55/pyrene.mol2": {
+    "origin": "_scratch/typer_corpus/pyrene.mol2",
+    "sha256": "0aff66a8280d4e1cc69a5749c406722c1b43a212dccc88e03508e81de479a961"
+  },
+  "historical55/pyridazine.mol2": {
+    "origin": "_scratch/typer_corpus/pyridazine.mol2",
+    "sha256": "d7e37a62ab0419aac8b8d525e24be7e2369ada33ddec16697bfde6039c8022d8"
+  },
+  "historical55/pyridine.mol2": {
+    "origin": "_scratch/typer_corpus/pyridine.mol2",
+    "sha256": "7e93e116af083739f9ed33e0be1fb17c811823dcdbce37b71c6b7419ec445eed"
+  },
+  "historical55/pyrimidine.mol2": {
+    "origin": "_scratch/typer_corpus/pyrimidine.mol2",
+    "sha256": "01495eaf787ea16124788ea631001a32b02076b7c27c3d2193900bba361a8a3e"
+  },
+  "historical55/pyrrole.mol2": {
+    "origin": "_scratch/typer_corpus/pyrrole.mol2",
+    "sha256": "3f188a0147835eb1c62498b3e52da350735158d01bbc6379adcc178d769c0d9d"
+  },
+  "historical55/quinoline.mol2": {
+    "origin": "_scratch/typer_corpus/quinoline.mol2",
+    "sha256": "99df81f61c7f0f01a906297b7d9cfaf52c084a39ffea82ca83e05f75c6ea293c"
+  },
+  "historical55/serine.mol2": {
+    "origin": "_scratch/typer_corpus/serine.mol2",
+    "sha256": "3262698c2b895a7ea9f127316d8b3063653e9515900be24ea9ccdcc4ebdc8836"
+  },
+  "historical55/styrene.mol2": {
+    "origin": "_scratch/typer_corpus/styrene.mol2",
+    "sha256": "bb790b3dc00d186265ace980adea458478ee0d3fbd8512027fd0c1487849fdee"
+  },
+  "historical55/sulfate.mol2": {
+    "origin": "_scratch/typer_corpus/sulfate.mol2",
+    "sha256": "344f6f0886c55983ce33d4e4a507c2057cbf1c80f7996700c9830ca2272d8083"
+  },
+  "historical55/thiophene.mol2": {
+    "origin": "_scratch/typer_corpus/thiophene.mol2",
+    "sha256": "31d9587fbf4f7c8937272e5681d394d61466129ac2bf0abb52876954614b36f9"
+  },
+  "historical55/threonine.mol2": {
+    "origin": "_scratch/typer_corpus/threonine.mol2",
+    "sha256": "bef465785e846d5c66e3fd386844a5f459b6c0542d11329b08d5de73469831c3"
+  },
+  "historical55/toluene.mol2": {
+    "origin": "_scratch/typer_corpus/toluene.mol2",
+    "sha256": "2d07dcb029fc851ac86e17f75ee74c7652246c99cec6c1f9d412c2a08659ba37"
+  },
+  "historical55/trimethylphosphate.mol2": {
+    "origin": "_scratch/typer_corpus/trimethylphosphate.mol2",
+    "sha256": "961b2f38040ecc5624cb7ff3590f8bbc267049165755259717f1ae09457cee08"
+  },
+  "historical55/tryptophan.mol2": {
+    "origin": "_scratch/typer_corpus/tryptophan.mol2",
+    "sha256": "87b6bc4a13b5c0210b653171b8eac37766cd47274eaceeed44c2b8dc8b8a4fcb"
+  },
+  "historical55/uracil.mol2": {
+    "origin": "_scratch/typer_corpus/uracil.mol2",
+    "sha256": "f417d80e327b34fec88ba6c1272abf8503b633e30c189b006e95d7b88ca52ba0"
+  },
+  "historical29/BH3.mol2": {
+    "origin": "references/sobtop/gt/probes/BH3.mol2",
+    "sha256": "44277c87d4b1a175cfcb8d38a26c23b8a8fd621bcebda5aa0e713d82ef7ae4fc"
+  },
+  "historical29/CH2O.mol2": {
+    "origin": "references/sobtop/gt/probes/CH2O.mol2",
+    "sha256": "f369c618504771b3b41d4d0a1a5c5160930e9d2e9a65e97e8723f6f944c7b883"
+  },
+  "historical29/NH3.mol2": {
+    "origin": "references/sobtop/gt/probes/NH3.mol2",
+    "sha256": "0e1158f40776b7a7bf694502020d39d9eae2b27eca4971a8c3c7580d44559820"
+  },
+  "historical29/PCl3.mol2": {
+    "origin": "references/sobtop/gt/probes/PCl3.mol2",
+    "sha256": "f06b905f04493672483de35e499c199c083bfb115ca2681dd80aaa0385f10cd9"
+  },
+  "historical29/PyramC.mol2": {
+    "origin": "references/sobtop/gt/probes/PyramC.mol2",
+    "sha256": "85a0a0e58613eac503db81351ee7623a71e31436b5b9fcca691429663cdbf8fd"
+  },
+  "historical29/benz_0.0.mol2": {
+    "origin": "references/sobtop/gt/probes/benz_0.0.mol2",
+    "sha256": "dabfc8e00f0e251a88f096ff617bc8a1761a8caafb6d275111b9734e8a9c1c57"
+  },
+  "historical29/benz_0.02.mol2": {
+    "origin": "references/sobtop/gt/probes/benz_0.02.mol2",
+    "sha256": "447687f08f47099a4e66fbdcb2453220805a6bfb8bbcb03c24265c0c10085c75"
+  },
+  "historical29/benz_0.05.mol2": {
+    "origin": "references/sobtop/gt/probes/benz_0.05.mol2",
+    "sha256": "9821a56e67bbdff5bdfc76a54613c72a7a8d22f5238d1cd3e34ddefe049fceb3"
+  },
+  "historical29/benz_0.08.mol2": {
+    "origin": "references/sobtop/gt/probes/benz_0.08.mol2",
+    "sha256": "3435e7fc243f9db52df3517bbde191f90276bb59a3818f6268a26f87d5e2c943"
+  },
+  "historical29/benz_0.10.mol2": {
+    "origin": "references/sobtop/gt/probes/benz_0.10.mol2",
+    "sha256": "fe7ee463dd361028390d84c7eed214539488b04e6c45d63898261c3aa6e53447"
+  },
+  "historical29/benz_0.12.mol2": {
+    "origin": "references/sobtop/gt/probes/benz_0.12.mol2",
+    "sha256": "d94fb9cbe6bb77c3a0597beba9612c8b099798aa1061dda4d8c4c9b1221fc61f"
+  },
+  "historical29/benz_0.15.mol2": {
+    "origin": "references/sobtop/gt/probes/benz_0.15.mol2",
+    "sha256": "494e87b7ddb15a69bad3008d91583afb957278ce0fa674080d54647c791db99d"
+  },
+  "historical29/benz_0.16.mol2": {
+    "origin": "references/sobtop/gt/probes/benz_0.16.mol2",
+    "sha256": "53158cdd9c6d8fd78a6a4ed2de1fc2a8dc6dc1089e0a907e93078c4eab4a03a5"
+  },
+  "historical29/benz_0.17.mol2": {
+    "origin": "references/sobtop/gt/probes/benz_0.17.mol2",
+    "sha256": "5ab741ba88d3e4ef17d93348d5444a742b6d2558ea08b34ece5f9ab2c9d5daab"
+  },
+  "historical29/benz_0.175.mol2": {
+    "origin": "references/sobtop/gt/probes/benz_0.175.mol2",
+    "sha256": "8fefac0dcccb28d082466d014597658502daf67e366c0a6dc75eae1ceb54a7d0"
+  },
+  "historical29/benz_0.18.mol2": {
+    "origin": "references/sobtop/gt/probes/benz_0.18.mol2",
+    "sha256": "e496dc739334292aabe37b33ef8962c2aee850184a9eb53d541136f939b7468b"
+  },
+  "historical29/benz_0.19.mol2": {
+    "origin": "references/sobtop/gt/probes/benz_0.19.mol2",
+    "sha256": "ad32985532bb74f53bc9d94a9587dc11815055d2df02245ef45f03c91fd4f86f"
+  },
+  "historical29/benz_0.20.mol2": {
+    "origin": "references/sobtop/gt/probes/benz_0.20.mol2",
+    "sha256": "dafabbfcdd462ea8b6487f409e9df38c985f9cc29c7484636eae370211387602"
+  },
+  "historical29/benz_0.25.mol2": {
+    "origin": "references/sobtop/gt/probes/benz_0.25.mol2",
+    "sha256": "c72ce1d7996f3f7ea67f07298d19042b2690cc00c2f86157e45f5d56fbe6381c"
+  },
+  "historical29/benz_0.30.mol2": {
+    "origin": "references/sobtop/gt/probes/benz_0.30.mol2",
+    "sha256": "b951438ab7162a6689ee78f3214bcc2c1aba3af7fd03fdfd0ffb78d7486d4a55"
+  },
+  "historical29/benz_0.40.mol2": {
+    "origin": "references/sobtop/gt/probes/benz_0.40.mol2",
+    "sha256": "92cde6179c0933e532113189c67e6dd8a455a04ea5f3a604cf8ddd0a3bd81fc1"
+  },
+  "historical29/benz_0.60.mol2": {
+    "origin": "references/sobtop/gt/probes/benz_0.60.mol2",
+    "sha256": "9e9a8fa41d8e8f813dbfabfb720d9181069ee09a31c8dbc2a6f479bf52e24a62"
+  },
+  "historical29/benz_0.80.mol2": {
+    "origin": "references/sobtop/gt/probes/benz_0.80.mol2",
+    "sha256": "48e3731769dd21ebafcef275becc5e0dbf4edd4fc0a15b153fa1a5b78ff045e5"
+  },
+  "historical29/benz_1.00.mol2": {
+    "origin": "references/sobtop/gt/probes/benz_1.00.mol2",
+    "sha256": "050fcf9569c904644098051a1d5d2062f8e06f8db88cfd40f7b71d4b786b127c"
+  },
+  "historical29/cprop.mol2": {
+    "origin": "references/sobtop/gt/probes/cprop.mol2",
+    "sha256": "d818de8ad589995ff43ee593c7544cada7b813291b108d226d01dc00ad059d97"
+  },
+  "historical29/imporder.mol2": {
+    "origin": "references/sobtop/gt/probes/imporder.mol2",
+    "sha256": "e5fd8ff7ec0c09b0e3d46eee16f5a4af5361fd09afc883a9d21b2331dcefc5b7"
+  },
+  "historical29/scramble.mol2": {
+    "origin": "references/sobtop/gt/probes/scramble.mol2",
+    "sha256": "30297f624bc461afaf317ddb996a9952201d0f56c3c463b41133722cd1240dfb"
+  },
+  "historical29/scramble2.mol2": {
+    "origin": "references/sobtop/gt/probes/scramble2.mol2",
+    "sha256": "e37f601121ca3c5ae93cc2f7b999d32f01386e5e69581f4c724d7e187019fcf6"
+  },
+  "historical29/water.mol2": {
+    "origin": "references/sobtop/gt/probes/water.mol2",
+    "sha256": "466bf8aa9fd8bf93aa570520548e15632f02c638fb8d1132fe1bb2bce76787d9"
+  },
+  "boundary/ring3.mol2": {
+    "smiles": "C1CC1",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "f49509e00df85138da44291f2080455b8a90c39e3b7ab0084f0b54fd44b0f778"
+  },
+  "boundary/ring4.mol2": {
+    "smiles": "C1CCC1",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "22b380f90d173defa5b8619ad65fa2317a183ca3f498d1d5ed952c59e47c3616"
+  },
+  "boundary/ring5.mol2": {
+    "smiles": "C1CCCC1",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "8067c97057333ffcb4e820fd2b01524cee3757be7981f786e629115e278b1eb5"
+  },
+  "boundary/ring6.mol2": {
+    "smiles": "C1CCCCC1",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "5528f66a39f48ca4fb8b90d4f0fece4ccbf7def62b8a539a5e080dad1308ec72"
+  },
+  "boundary/ring7.mol2": {
+    "smiles": "C1CCCCCC1",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "e4567a5dd43e60e856cd16a0374e53e6cfa368fe0d03858959fb00820f293e08"
+  },
+  "boundary/ring8.mol2": {
+    "smiles": "C1CCCCCCC1",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "e4e166e232f19aa95f92995d240bb296ab070d4c7b81a831ba980963f4dcc6ed"
+  },
+  "boundary/ring9.mol2": {
+    "smiles": "C1CCCCCCCC1",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "df4b62d77458a7b2572dce5c9ed493d43f3e28c16d7468bd0121624fa7d4db51"
+  },
+  "boundary/ring10.mol2": {
+    "smiles": "C1CCCCCCCCC1",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "2f462758c4791c4e8fa4230398cdb63b705edaa2e62177f50582277bac22c3f3"
+  },
+  "boundary/ring11.mol2": {
+    "smiles": "C1CCCCCCCCCC1",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "0ad5dc325d1bc731e5182cbba6fd46d83dc8bcbf154835ad99d2c136c209f0ef"
+  },
+  "boundary/benzene_h.mol2": {
+    "smiles": "c1ccccc1",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "4bd1a1bb3bc2a0e21eec2e4fe7d16e4045c9781e788a2a2d2925ca863fe6d46a"
+  },
+  "boundary/pyridine_h.mol2": {
+    "smiles": "c1ccncc1",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "35f98522ea1fa7d0139db2c333b733235612fc4a16cd503eedc7b0a71a0dcad4"
+  },
+  "boundary/pyrrole_h.mol2": {
+    "smiles": "c1cc[nH]c1",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "b28d1c2d9df46f532ad3b94815956e189d168fcef46534a4759d55e8f09103a7"
+  },
+  "boundary/imidazole_h.mol2": {
+    "smiles": "c1ncc[nH]1",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "b849d736942cf43a4120b1844eda32ebe97bf14cd780919aa9a09c89d2cadf79"
+  },
+  "boundary/naphthalene_h.mol2": {
+    "smiles": "c1ccc2ccccc2c1",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "770e7d1ad9f0c2ae3a59fc7be157094615a87bd1d5559b5cceb3f6cdc2217ea7"
+  },
+  "boundary/indole_h.mol2": {
+    "smiles": "c1ccc2[nH]ccc2c1",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "12e586cde0690a6deb5b72bc04c3ff6eb1b16f01b66342fd3daa48244d34132c"
+  },
+  "boundary/biphenyl_h.mol2": {
+    "smiles": "c1ccccc1-c2ccccc2",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "3160214959e2c5898b1c55c372583981fd2e6bed352ace5120995d8f8d2dfa9c"
+  },
+  "boundary/furan_h.mol2": {
+    "smiles": "c1ccoc1",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "2cc699d2e9de481d36757b34188e3c08ac8b153c28251a2ea574de4ba5f2830d"
+  },
+  "boundary/thiophene_h.mol2": {
+    "smiles": "c1ccsc1",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "f48605185be2b74637f2958a3b1e1be4b9b998076a3abd39cd9f238a5c2d207a"
+  },
+  "boundary/butadiene_h.mol2": {
+    "smiles": "C=CC=C",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "584a85bf70ffb9c01dc9639b8f0c8681286063587c140957014affc51ca62a70"
+  },
+  "boundary/hexatriene_h.mol2": {
+    "smiles": "C=CC=CC=C",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "5a8030c4c8aae62b30a9ad77444da607dc44819230096f0834aafb6bd4fcec23"
+  },
+  "boundary/enyne_h.mol2": {
+    "smiles": "C=CC#C",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "43276d8fa2f72eb424b6bfa5490124c0a8e611f51bed9a6d414100bfbe5aedea"
+  },
+  "boundary/allene_h.mol2": {
+    "smiles": "C=C=C",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "b75e05d1ead4ac7a812a09cc973ccb868baf4143716580aeb6fbb4fd9b77d1b7"
+  },
+  "boundary/disconnected_conjugation.mol2": {
+    "smiles": "C=CC=C.C=CC=C",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "cd2152f2df260107cf5837766d5046d26d108f68ad3298c472a9ea005786287f"
+  },
+  "boundary/spiro_h.mol2": {
+    "smiles": "C1CC2(C1)CCC2",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "f4eee21f2471dc0886def50b9969e3cab4603ac1ad61704a875c68fed829e763"
+  },
+  "boundary/bridged_h.mol2": {
+    "smiles": "C1CC2CCC1C2",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "3b245a3b94c4a68c2c367541364ebe9900503608c1daedc8c84f922ea042212c"
+  },
+  "boundary/ring_carbonyl_h.mol2": {
+    "smiles": "O=C1C=CC=C1",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "9eb6b779e4c2f0562a791bb483b009c67ea965baad244e2d2001a35a030ff1e2"
+  },
+  "boundary/fused_aliphatic_h.mol2": {
+    "smiles": "C1CCC2CCCCC2C1",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "738e6c27b7cd45ddd0193c9fcb589dc0d292f37d1989cf0f7fb1838fa10455ed"
+  },
+  "boundary/fluoromethane_h.mol2": {
+    "smiles": "CF",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "ab5f942ba768829bf50943e77081af77c9139cb70b324ac7b9f81f675c09b887"
+  },
+  "boundary/difluoromethane_h.mol2": {
+    "smiles": "FCF",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "a65d66c17cef9c48b7fc7f19c4f0c03470aae8e1d9f4e89f2050568c1d077fb5"
+  },
+  "boundary/trifluoromethane_h.mol2": {
+    "smiles": "FC(F)F",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "5ff45e843516e8ea3e9de30b65debfef555845da2d62ec1c2f93b3006e2ff2a4"
+  },
+  "boundary/ammonium_h.mol2": {
+    "smiles": "[NH4+]",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "00a6b38c59119b87c11ae087d7200cfdb89be9554e900bde3a0bb8c9f3775249"
+  },
+  "boundary/nitrile_h.mol2": {
+    "smiles": "CC#N",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "35c72ad128d7dd4255e66f62b01387d39b71edaa65a2699a5ed44f4502f58c64"
+  },
+  "boundary/nitro_h.mol2": {
+    "smiles": "C[N+](=O)[O-]",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "7fa647f76c243103bb28504e9e02dd2c52bdb349f279328ec3787f0cf3ec4434"
+  },
+  "boundary/halogens_h.mol2": {
+    "smiles": "FC(Cl)(Br)I",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "dfeef33d9b988266dd8ef5a95fb0e7e2f7c1ea8352f80f29603f503595611c6e"
+  },
+  "boundary/methane_h.mol2": {
+    "smiles": "C",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "17392dd5fa26914135467cfd48f1a44d59ccd3703607cbed08e0008fe23fa302"
+  },
+  "boundary/peroxide_h.mol2": {
+    "smiles": "COOC",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "27fe0d276d6311793116bed76ea585f7cf4f310f8a28698f82c022d730081c77"
+  },
+  "boundary/phosphate_h.mol2": {
+    "smiles": "OP(=O)(O)O",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "65ed85f34ae47d9f5ed983b8b7e17d2db77921240469f8f6328cea9b5e71fa63"
+  },
+  "boundary/sulfone_h.mol2": {
+    "smiles": "CS(=O)(=O)C",
+    "generator": "OpenBabel addh; coordinates irrelevant to typing",
+    "sha256": "69915a28ec8bda8d5d2b5b661413e587c3c405d53ecb331204be29e805c45975"
+  },
+  "boundary/name_upper_h.mol2": {
+    "derived_from": "historical29/water.mol2",
+    "names": [
+      "O",
+      "HA",
+      "HB"
+    ],
+    "sha256": "9e23a23d83dae9b636acfbc0e68869957e8a0367c6367137be4f8d1014e223a0"
+  },
+  "boundary/name_star.mol2": {
+    "derived_from": "historical29/water.mol2",
+    "names": [
+      "*O",
+      "*H",
+      "*H"
+    ],
+    "sha256": "07b553293b2d8d1b6e2a2efa693d7492f1d9fbb25409076f82117e4aae05f7d0"
+  },
+  "boundary/name_long.mol2": {
+    "derived_from": "historical29/water.mol2",
+    "names": [
+      "O123456",
+      "H123456",
+      "H987654"
+    ],
+    "sha256": "c6ef8bfd40efd8f425631c10c8003d4ab10495915650ea4d8caebc514c0e871f"
+  },
+  "boundary/name_isotopes.mol2": {
+    "derived_from": "historical29/water.mol2",
+    "names": [
+      "O",
+      "D1",
+      "T1"
+    ],
+    "sha256": "d32ce54484a604dc81adef607871f09b0193ec9c05d5caddb4e12c272d4ee8f5"
+  },
+  "boundary/name_correction.mol2": {
+    "derived_from": "historical29/water.mol2",
+    "names": [
+      "O",
+      "Cl1",
+      "Br1"
+    ],
+    "sha256": "aa103d0d2fe8b1dfd107454b626842003c923f809a0cff0d1b9f70e0e50d3806"
+  }
+}

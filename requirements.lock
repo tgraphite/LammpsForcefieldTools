@@ -1,0 +1,19 @@
+# Python 3.11 implementation lockfile.
+#
+# Bootstrap:
+#   /usr/bin/python3 -m venv .venv
+#   .venv/bin/pip install -r requirements.lock
+#   .venv/bin/pip install --no-deps -e .
+#
+# Or use scripts/bootstrap_env.sh, which also runs pip check.
+numpy==1.26.4
+scipy==1.17.1
+pyscf==2.14.0
+dftd3==1.6.0
+cclib==1.8.1
+geometric==1.1.1
+qcelemental==0.51.1
+qcengine==0.51.0
+openbabel-wheel==3.1.1.23
+PyYAML==6.0.3
+pytest==9.0.2
